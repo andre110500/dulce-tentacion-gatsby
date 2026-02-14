@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import { useStaticQuery, graphql } from "gatsby";
-
+import { useLocation } from "@reach/router";
 const SEO = ({ title, description, image, url }) => {
   const { site } = useStaticQuery(graphql`
     query {
@@ -15,10 +15,10 @@ const SEO = ({ title, description, image, url }) => {
       }
     }
   `);
-
+  const location = useLocation();
   const metaTitle = title || site.siteMetadata.title;
   const metaDescription = description || site.siteMetadata.description;
-  const metaUrl = url || site.siteMetadata.siteUrl;
+  const metaUrl = url || `${site.siteMetadata.siteUrl}${location.pathname}`;
   const metaImage = image || site.siteMetadata.image; // Use passed image or default
   const metaImageUrl = `${site.siteMetadata.siteUrl}${metaImage}`; // Complete URL for Open Graph
 
