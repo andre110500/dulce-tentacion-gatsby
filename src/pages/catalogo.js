@@ -15,6 +15,7 @@ import {
 } from "react-icons/fa";
 import { GiIcePop, GiIceCreamCone } from "react-icons/gi";
 import { PiPopsicleFill } from "react-icons/pi";
+import MobileShopNav from "../components/MobileShopNav";
 
 const catalogSections = [
   {
@@ -150,6 +151,7 @@ export default function Shop(props) {
 
         <CatalogInfo />
       </div>
+      <MobileShopNav currentPage="catalog" />
     </main>
   );
 }

@@ -196,3 +196,9 @@
     background-color: #ddd !important;
   }
 }
+
+@media (max-width: 720px) {
+  #cart {
+    padding-bottom: 5.6rem;
+  }
+}

@@ -17,6 +17,7 @@ import { TbCopyCheckFilled } from "react-icons/tb";
 
 import { triggerAlert } from "../context/GlobalContext";
 import { StaticImage } from "gatsby-plugin-image";
+import MobileShopNav from "../components/MobileShopNav";
 export default function Cart() {
   const { dispatch, cartItems, getTotalCartPriceWithoutDiscount } =
     useContext(GlobalContext);
@@ -331,6 +332,7 @@ export default function Cart() {
           </div>
         )}
       </div>
+      <MobileShopNav currentPage="cart" />
     </main>
   );
 }

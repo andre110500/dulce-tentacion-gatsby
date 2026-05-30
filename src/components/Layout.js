@@ -13,6 +13,7 @@ import "@fontsource-variable/caveat";
 import "@fontsource/roboto";
 import "@fontsource/sofia";
 import "../assets/scss/utils/_theme.scss";
+import "../assets/scss/mobile-shop-nav.scss";
 export default function Layout({ children }) {
   const { title, description } = useSiteMetadata();
   return (
