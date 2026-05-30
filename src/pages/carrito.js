@@ -94,6 +94,16 @@ export default function Cart() {
     return getTotalCartPriceWithoutDiscount() - getTotalDiscountAmmount();
   }
 
+  const deliveryQuote =
+    deliveryInfo.isChecked && deliveryInfo.deliveryQuote?.source === "envios"
+      ? deliveryInfo.deliveryQuote
+      : null;
+  const deliveryFee = deliveryQuote ? Number(deliveryQuote.fee) || 0 : 0;
+
+  function getTotalOrderPrice() {
+    return getTotalCartPriceWithDiscount() + deliveryFee;
+  }
+
   //get deliveryInfo from localStorage if there is any
   //and populate form with it
   useEffect(() => {
@@ -103,6 +113,21 @@ export default function Cart() {
       const deliveryInfo = JSON.parse(deliveryInfoString);
 
       setDeliveryInfo({ ...deliveryInfo });
+      return;
+    }
+
+    const deliveryQuoteString = localStorage.getItem("deliveryZoneQuote");
+
+    if (deliveryQuoteString) {
+      const deliveryQuote = JSON.parse(deliveryQuoteString);
+
+      setDeliveryInfo({
+        isChecked: true,
+        neighborhood: deliveryQuote.zoneName,
+        address: deliveryQuote.address,
+        aditionalInfo: deliveryQuote.reference,
+        deliveryQuote,
+      });
     }
   }, []);
 
@@ -126,9 +151,11 @@ export default function Cart() {
         paymentMethod,
         deliveryInfo,
         totalCartPriceWithoutDiscount: getTotalCartPriceWithoutDiscount(),
-        totalCartPriceWithDiscount: getTotalCartPriceWithDiscount(),
+        totalCartPriceWithDiscount: getTotalOrderPrice(),
         totalDiscountAmmount: getTotalDiscountAmmount(),
         allIceCreamDiscounts: getAllIceCreamDiscounts(),
+        deliveryFee,
+        deliveryQuote,
       };
 
       const whatsappLink = createWhatsAppLink(messageData);
@@ -233,12 +260,14 @@ export default function Cart() {
                 autoComplete="on"
                 onSubmit={(e) => handleSubmit(e)}
               >
-                {cartItems.length > 1 && (
+                {(cartItems.length > 1 || deliveryFee > 0) && (
                   <SummarySection
                     isDeliveryChecked={deliveryInfo.isChecked}
                     getTotalCartPriceWithDiscount={
                       getTotalCartPriceWithDiscount
                     }
+                    deliveryFee={deliveryFee}
+                    getTotalOrderPrice={getTotalOrderPrice}
                     getAllIceCreamDiscounts={getAllIceCreamDiscounts}
                   />
                 )}

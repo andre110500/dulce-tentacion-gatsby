@@ -12,8 +12,6 @@ import {
 
 const WHATSAPP_URL =
   "https://api.whatsapp.com/send?phone=5491121690959&text=Hola%20vengo%20de%20la%20pagina%20web%20oficial%20!";
-const MAPS_URL =
-  "https://www.google.com/maps/search/?api=1&query=El%20Malambo%201733%2C%20Marcos%20Paz";
 const TIME_ZONE = "America/Argentina/Buenos_Aires";
 
 function getStoreStatus() {
@@ -46,18 +44,16 @@ export default function MobileShopNav({ currentPage }) {
 
   return (
     <nav className="mobile-shop-nav" aria-label="Accesos rapidos de compra">
-      <a
-        href={MAPS_URL}
+      <Link
+        to="/envios"
         className="mobile-shop-nav__info"
-        target="_blank"
-        rel="noopener noreferrer"
       >
         <FaMapMarkerAlt aria-hidden="true" />
         <span>
           <strong>Entrega en</strong>
           Marcos Paz
         </span>
-      </a>
+      </Link>
 
       <Link
         to={primaryTarget}

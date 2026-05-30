@@ -114,6 +114,29 @@
         gap: $gap * 1.5;
         font-size: 0.9rem;
 
+        .verified-delivery {
+          display: grid;
+          gap: 0.2rem;
+          padding: 0.85rem;
+          border: 1px solid rgba(19, 166, 166, 0.32);
+          border-radius: 0.45rem;
+          background: #eefaf8;
+          color: #131626;
+
+          strong {
+            color: #0e7979;
+          }
+
+          span {
+            font-weight: 800;
+          }
+
+          a {
+            color: #e8547e;
+            font-weight: 900;
+          }
+        }
+
         .container {
           .error {
             display: none;

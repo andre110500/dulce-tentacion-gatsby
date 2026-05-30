@@ -7,17 +7,23 @@ export default function SummarySection({
   getTotalCartPriceWithDiscount,
   isDeliveryChecked,
   getAllIceCreamDiscounts,
+  deliveryFee = 0,
+  getTotalOrderPrice,
 }) {
   const { getTotalCartPriceWithoutDiscount } = useContext(GlobalContext);
   console.log(JSON.stringify(getAllIceCreamDiscounts()));
   const noDisccount =
     getTotalCartPriceWithDiscount() == getTotalCartPriceWithoutDiscount();
+  const hasDeliveryFee = isDeliveryChecked && deliveryFee > 0;
+  const totalOrderPrice = getTotalOrderPrice
+    ? getTotalOrderPrice()
+    : getTotalCartPriceWithDiscount() + deliveryFee;
   return (
     <section className="summary">
-      <h3>{noDisccount ? "Total del carrito" : "Detalle:"} </h3>
+      <h3>{noDisccount && !hasDeliveryFee ? "Total del carrito" : "Detalle:"} </h3>
 
       <div className="container">
-        {!noDisccount && (
+        {(!noDisccount || hasDeliveryFee) && (
           <p>
             Productos: <span>$ {getTotalCartPriceWithoutDiscount()}</span>
           </p>
@@ -31,12 +37,18 @@ export default function SummarySection({
           ))}
         {/* Step 2: Conditional rendering based on isDeliveryChecked */}
 
-        {noDisccount ? (
+        {hasDeliveryFee && (
+          <p>
+            Envio: <span>$ {deliveryFee}</span>
+          </p>
+        )}
+
+        {noDisccount && !hasDeliveryFee ? (
           <h3>$ {getTotalCartPriceWithoutDiscount()}</h3>
         ) : (
           <p>
-            Total del carrito:
-            <span>${getTotalCartPriceWithDiscount()}</span>
+            Total:
+            <span>${totalOrderPrice}</span>
           </p>
         )}
 

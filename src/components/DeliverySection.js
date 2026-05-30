@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Link } from "gatsby";
 
 export default function DeliverySection({ setDeliveryInfo, deliveryInfo }) {
   useEffect(() => {
@@ -6,6 +7,16 @@ export default function DeliverySection({ setDeliveryInfo, deliveryInfo }) {
   }, [deliveryInfo]);
 
   const [isTakeAwayChecked, setIsTakeAwayChecked] = useState(false);
+  const deliveryQuote =
+    deliveryInfo.deliveryQuote?.source === "envios" ? deliveryInfo.deliveryQuote : null;
+
+  function clearDeliveryQuote() {
+    setDeliveryInfo((prev) => {
+      const { deliveryQuote, ...rest } = prev;
+      return rest;
+    });
+    localStorage.removeItem("deliveryZoneQuote");
+  }
 
   function checkValidity(e) {
     const isValid = e.target.validity.valid;
@@ -64,6 +75,14 @@ export default function DeliverySection({ setDeliveryInfo, deliveryInfo }) {
 
       {deliveryInfo.isChecked && (
         <div id="delivery-details">
+          {deliveryQuote && (
+            <div className="verified-delivery">
+              <strong>{deliveryQuote.zoneName}</strong>
+              <span>Envio: $ {deliveryQuote.fee}</span>
+              <Link to="/envios">Cambiar zona</Link>
+            </div>
+          )}
+
           <div className="container">
             <input
               placeholder="Barrio *"
@@ -79,6 +98,7 @@ export default function DeliverySection({ setDeliveryInfo, deliveryInfo }) {
                   ...prev,
                   neighborhood: selectedValue,
                 }));
+                clearDeliveryQuote();
               }}
             />
 
@@ -99,6 +119,7 @@ export default function DeliverySection({ setDeliveryInfo, deliveryInfo }) {
                   ...prev,
                   address: event.target.value,
                 }));
+                clearDeliveryQuote();
               }}
             />
 

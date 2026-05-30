@@ -8,6 +8,8 @@ export function createMessage({
   allIceCreamDiscounts,
   totalDiscountAmmount,
   paymentMethod,
+  deliveryFee = 0,
+  deliveryQuote,
 }) {
   const CART_ITEM_BULLET = "•";
   const INDENT = "    "; // Four spaces for indentation
@@ -79,6 +81,7 @@ export function createMessage({
   return (
     `*Orden*:\n${cartItemsList}` +
     formatDiscounts(allIceCreamDiscounts).join("") +
+    (deliveryFee > 0 ? `\nEnvio (${deliveryQuote?.zoneName || "zona verificada"}): $${deliveryFee}` : "") +
     `\n*Total: $${totalCartPriceWithDiscount}*\n\n` +
     (paymentMethod === "cash"
       ? "*Paga en efectivo*\n"
