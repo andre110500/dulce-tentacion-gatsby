@@ -36,11 +36,20 @@
   .choice-section,
   .rocklets-section,
   .order-summary {
-    overflow: hidden;
     border: 1px solid var(--form-border);
     border-radius: 0.5rem;
     background: #ffffff;
     box-shadow: var(--form-shadow);
+  }
+
+  .form-hero,
+  .rocklets-section,
+  .order-summary {
+    overflow: hidden;
+  }
+
+  .choice-section {
+    overflow: visible;
   }
 
   .form-hero {
@@ -127,6 +136,24 @@
       font-size: clamp(1.15rem, 2.4vw, 1.55rem);
       line-height: 1.15;
       letter-spacing: 0;
+    }
+  }
+
+  .choice-section:not(.choice-section--addons) {
+    .choice-section__header {
+      position: sticky;
+      top: calc(var(--header-height, 0rem) + 0.6rem);
+      z-index: 8;
+      margin: 0.6rem;
+      border: 1px solid var(--form-border);
+      border-radius: 0.5rem;
+      background: rgba(255, 248, 251, 0.96);
+      box-shadow: 0 0.85rem 1.35rem rgba(111, 38, 64, 0.16);
+      backdrop-filter: blur(10px);
+    }
+
+    .choice-group h3 {
+      position: static;
     }
   }
 
@@ -574,6 +601,12 @@
 
     .choice-group h3 {
       top: 0;
+    }
+
+    .choice-section:not(.choice-section--addons) {
+      .choice-section__header {
+        top: calc(var(--header-height, 0rem) + 0.65rem + env(safe-area-inset-top));
+      }
     }
 
     .container {
