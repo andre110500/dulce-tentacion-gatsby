@@ -34,9 +34,10 @@ export default function IceCreamForm({ data, location }) {
     return product.node.apiRoute === "generic/sauce";
   }).node.price;
 
-  const rockletsPrice = products.find((product) => {
+  const rockletsProduct = products.find((product) => {
     return product.node.name.toLowerCase() === "rocklets";
-  }).node.price;
+  }).node;
+  const rockletsPrice = rockletsProduct.price;
 
   const totalPrice =
     sauceMenuChosenFlavours.length * saucePrice +
@@ -158,6 +159,11 @@ export default function IceCreamForm({ data, location }) {
                 const isSelected = chosenFlavours.includes(flavour.name);
                 const isDisabled =
                   !isSelected && chosenFlavours.length >= maxSelections;
+                const sauceClass = flavour.name
+                  .toLowerCase()
+                  .normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "")
+                  .replace(/\s+/g, "-");
 
                 return (
                   <li key={flavour.name}>
@@ -180,10 +186,16 @@ export default function IceCreamForm({ data, location }) {
                         {isSelected && (
                           <FaCheck className="check-icon" aria-hidden="true" />
                         )}
-                        {image && (
+                        {isSauce && (
+                          <span
+                            className={`sauce-swatch sauce-swatch--${sauceClass}`}
+                            aria-hidden="true"
+                          />
+                        )}
+                        {!isSauce && image && (
                           <GatsbyImage image={image} alt={flavour.name} />
                         )}
-                        {!image && flavour.imgUrl && (
+                        {!isSauce && !image && flavour.imgUrl && (
                           <img
                             className="flavour-image"
                             src={flavour.imgUrl}
@@ -245,11 +257,29 @@ export default function IceCreamForm({ data, location }) {
         {product.apiRoute === "generic/flavour" && (
           <>
             <div className="rocklets-section">
-              <div className="choice-section__header">
-                <div>
-                  <p>Opcional</p>
-                  <h2>Agregale Rocklets (${rockletsPrice})</h2>
+              <div className="rocklets-card">
+                <div className="rocklets-card__image">
+                  {getImage(rockletsProduct.localImage) ? (
+                    <GatsbyImage
+                      image={getImage(rockletsProduct.localImage)}
+                      alt={rockletsProduct.name}
+                    />
+                  ) : (
+                    <img src={rockletsProduct.imgUrl} alt={rockletsProduct.name} />
+                  )}
                 </div>
+                <div className="rocklets-card__content">
+                  <strong>Rocklets</strong>
+                  <span>${rockletsPrice}</span>
+                </div>
+                <button
+                  className={`rocklets-toggle ${rockletsChecked ? "selected" : ""}`}
+                  type="button"
+                  aria-pressed={rockletsChecked}
+                  onClick={() => setRockletsChecked((value) => !value)}
+                >
+                  <span>{rockletsChecked ? "Sí" : "No"}</span>
+                </button>
               </div>
               <div className="addon-toggle">
                 <button

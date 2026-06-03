@@ -257,6 +257,47 @@
     .gatsby-image-wrapper img {
       object-fit: cover !important;
     }
+
+    .sauce-swatch {
+      position: relative;
+      display: block;
+      width: 2.25rem;
+      height: 2.25rem;
+      flex: 0 0 2.25rem;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      box-shadow:
+        inset 0 0.35rem 0.55rem rgba(255, 255, 255, 0.28),
+        0 0.35rem 0.8rem rgba(35, 33, 41, 0.16);
+
+      &::after {
+        position: absolute;
+        top: 0.42rem;
+        left: 0.48rem;
+        width: 0.62rem;
+        height: 0.36rem;
+        content: "";
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.48);
+        transform: rotate(-20deg);
+      }
+    }
+
+    .sauce-swatch--chocolate {
+      background: linear-gradient(135deg, #3f2118, #7a3f2a);
+    }
+
+    .sauce-swatch--dulce-de-leche {
+      background: linear-gradient(135deg, #a7642d, #e2a456);
+    }
+
+    .sauce-swatch--frutilla {
+      background: linear-gradient(135deg, #d82661, #ff7aa3);
+    }
+
+    .sauce-swatch--caramelo {
+      background: linear-gradient(135deg, #bd691a, #f0b24d);
+    }
   }
 
   .container--sauces {
@@ -295,6 +336,106 @@
       &.selected {
         background: linear-gradient(135deg, #ff5b94, var(--form-pink));
         color: #ffffff;
+      }
+    }
+  }
+
+  .rocklets-section > .addon-toggle {
+    display: none;
+  }
+
+  .rocklets-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    margin: clamp(0.85rem, 2.5vw, 1.2rem) clamp(0.85rem, 2.5vw, 1.2rem) 0;
+    padding: 0.85rem;
+    border: 1px solid var(--form-border);
+    border-radius: 0.5rem;
+    background: #ffffff;
+  }
+
+  .rocklets-card__image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.8rem;
+    height: 4.8rem;
+    border-radius: 0.5rem;
+    background: linear-gradient(180deg, #ffffff 0%, #fff4f9 100%);
+
+    .gatsby-image-wrapper,
+    > img {
+      width: 4rem;
+      max-height: 4rem;
+      display: block;
+      object-fit: contain;
+    }
+
+    .gatsby-image-wrapper img {
+      object-fit: contain !important;
+    }
+  }
+
+  .rocklets-card__content {
+    display: grid;
+    gap: 0.2rem;
+    min-width: 0;
+
+    strong {
+      color: var(--form-ink);
+      font-size: 1rem;
+      line-height: 1.2;
+    }
+
+    span {
+      color: var(--form-muted);
+      font-size: 0.9rem;
+      line-height: 1.3;
+    }
+  }
+
+  .rocklets-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 4.7rem;
+    min-height: 2.35rem;
+    padding: 0.25rem 0.62rem;
+    border-radius: 99rem;
+    background: #fff0f6;
+    box-shadow: none;
+    color: var(--form-pink);
+    font-size: 0.9rem;
+    font-weight: 900;
+    transition: background 0.16s ease, color 0.16s ease;
+
+    &::before {
+      position: absolute;
+      left: 0.28rem;
+      width: 1.78rem;
+      height: 1.78rem;
+      content: "";
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 0.25rem 0.6rem rgba(35, 33, 41, 0.18);
+      transition: transform 0.16s ease;
+    }
+
+    span {
+      position: relative;
+      z-index: 1;
+    }
+
+    &.selected {
+      justify-content: flex-start;
+      background: linear-gradient(135deg, #ff5b94, var(--form-pink));
+      color: #ffffff;
+
+      &::before {
+        transform: translateX(2.32rem);
       }
     }
   }
@@ -454,11 +595,37 @@
         width: 2.75rem;
         height: 2.75rem;
       }
+
+      .sauce-swatch {
+        width: 2rem;
+        height: 2rem;
+        flex-basis: 2rem;
+      }
     }
 
     .buttons-container {
       grid-template-columns: 1fr;
       bottom: calc(0.65rem + env(safe-area-inset-bottom));
+    }
+
+    .rocklets-card {
+      gap: 0.7rem;
+      padding: 0.75rem;
+    }
+
+    .rocklets-toggle {
+      width: 4.25rem;
+      min-height: 2.15rem;
+      padding-inline: 0.54rem;
+
+      &::before {
+        width: 1.58rem;
+        height: 1.58rem;
+      }
+
+      &.selected::before {
+        transform: translateX(2.08rem);
+      }
     }
   }
 }
