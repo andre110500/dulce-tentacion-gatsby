@@ -1,15 +1,17 @@
 import "../assets/scss/form.scss";
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import { useContext } from "react";
 import Swal from "sweetalert2";
-import chocolatePreview from "../images/chocolate.jpg";
 import { GlobalContext } from "../context/GlobalContext";
 import React from "react";
 import { GatsbyImage, getImage } from "gatsby-plugin-image";
 import { navigate } from "gatsby";
 import { graphql } from "gatsby";
 import DetailsSection from "../components/DetailsSection";
-import { TiArrowBack } from "react-icons/ti";
+import {
+  FaCheck,
+  FaChevronLeft,
+} from "react-icons/fa";
 
 export default function IceCreamForm({ data, location }) {
   const { dispatch } = useContext(GlobalContext);
@@ -56,11 +58,9 @@ export default function IceCreamForm({ data, location }) {
     if (checked) {
       setMainMenuChosenFlavours((prev) => [...prev, value]);
     } else {
-      const index = mainMenuChosenFlavours.indexOf(value);
-      const copy = mainMenuChosenFlavours;
-      copy.splice(index, 1);
-
-      setMainMenuChosenFlavours([...copy]);
+      setMainMenuChosenFlavours((prev) =>
+        prev.filter((flavour) => flavour !== value)
+      );
     }
   }
 
@@ -70,11 +70,9 @@ export default function IceCreamForm({ data, location }) {
     if (checked) {
       setSauceMenuChosenFlavours((prev) => [...prev, value]);
     } else {
-      const index = sauceMenuChosenFlavours.indexOf(value);
-      const copy = sauceMenuChosenFlavours;
-      copy.splice(index, 1);
-
-      setSauceMenuChosenFlavours([...copy]);
+      setSauceMenuChosenFlavours((prev) =>
+        prev.filter((flavour) => flavour !== value)
+      );
     }
   }
 
@@ -131,57 +129,67 @@ export default function IceCreamForm({ data, location }) {
     maxSelections
   ) {
     const isSauce = apiRoute === "generic/sauce";
+    const title =
+      maxSelections === 1
+        ? `Elegí ${isSauce ? `una salsa ($${saucePrice})` : "un sabor"}`
+        : `Podés elegir hasta ${maxSelections} sabores`;
 
     return (
-      <div>
-        <h2>
-          {maxSelections === 1
-            ? `Elige ${isSauce ? `una salsa ($${saucePrice})` : "un sabor"}`
-            : `Podes elegir hasta ${maxSelections} sabores`}
-        </h2>
-        <div>
-          <h3>
-            {isSauce ? "Salsas" : "Sabores"}
+      <section className={`choice-section ${isSauce ? "choice-section--addons" : ""}`}>
+        <div className="choice-section__header">
+          <div>
+            <p>{isSauce ? "Opcional" : "Paso principal"}</p>
+            <h2>{title}</h2>
+          </div>
+          <span className="choice-section__counter">
             {maxSelections > 1 && (
-              <span>{` ${chosenFlavours.length}/${maxSelections}`}</span>
+              <>{chosenFlavours.length}/{maxSelections}</>
             )}
-          </h3>
-          <ul className="container">
+          </span>
+        </div>
+
+        <div className="choice-group">
+          <h3>{isSauce ? "Salsas" : "Sabores"}</h3>
+          <ul className={`container ${isSauce ? "container--sauces" : ""}`}>
             {flavours
               .filter((flavour) => !flavour.outOfStock)
               .map((flavour) => {
-                const image =
-                  apiRoute === "generic/flavour" &&
-                  getImage(flavour.localImage);
+                const image = getImage(flavour.localImage);
+                const isSelected = chosenFlavours.includes(flavour.name);
+                const isDisabled =
+                  !isSelected && chosenFlavours.length >= maxSelections;
+
                 return (
-                  <li>
+                  <li key={flavour.name}>
                     <label
-                      key={flavour.name}
+                      className={`${isSelected ? "selected" : ""} ${
+                        isDisabled ? "disabled" : ""
+                      }`}
                       htmlFor={`${namePrefix}-${flavour.name}`}
                     >
-                      <span
-                        style={{
-                          color: chosenFlavours.includes(flavour.name)
-                            ? "black"
-                            : "inherit",
-                        }}
-                      >
-                        {flavour.name}
-                      </span>
+                      <span>{flavour.name}</span>
                       <div>
                         <input
                           id={`${namePrefix}-${flavour.name}`}
                           type="checkbox"
-                          disabled={
-                            !chosenFlavours.includes(flavour.name) &&
-                            chosenFlavours.length >= maxSelections
-                          }
+                          disabled={isDisabled}
                           name={`${namePrefix}-flavour`}
                           value={flavour.name}
                           onChange={handleChange}
                         />
-                        {apiRoute === "generic/flavour" && (
+                        {isSelected && (
+                          <FaCheck className="check-icon" aria-hidden="true" />
+                        )}
+                        {image && (
                           <GatsbyImage image={image} alt={flavour.name} />
+                        )}
+                        {!image && flavour.imgUrl && (
+                          <img
+                            className="flavour-image"
+                            src={flavour.imgUrl}
+                            alt={flavour.name}
+                            loading="lazy"
+                          />
                         )}
                       </div>
                     </label>
@@ -190,13 +198,27 @@ export default function IceCreamForm({ data, location }) {
               })}
           </ul>
         </div>
-      </div>
+      </section>
     );
   }
 
   return (
     <main id="ice-cream-list">
       <form onSubmit={handleSubmit}>
+        <section className="form-hero">
+          <div className="form-hero__image">
+            {getImage(product.localImage) ? (
+              <GatsbyImage image={getImage(product.localImage)} alt={product.name} />
+            ) : (
+              <img src={product.imgUrl} alt={product.name} />
+            )}
+          </div>
+          <div className="form-hero__copy">
+            <p>Armá tu pedido</p>
+            <h1>{product.name}</h1>
+            {product.description && <span>{product.description}</span>}
+          </div>
+        </section>
         {<h1>{product.name} 🍨</h1>}
 
         {unorderedList(
@@ -223,29 +245,38 @@ export default function IceCreamForm({ data, location }) {
         {product.apiRoute === "generic/flavour" && (
           <>
             <div className="rocklets-section">
-              <h2>Agregale Rocklets (${rockletsPrice})</h2>
-              <div className="checkbox-container">
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={rockletsChecked}
-                    onChange={(e) => setRockletsChecked(e.target.checked)}
-                  />
-                  Si
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={!rockletsChecked}
-                    onChange={(e) => setRockletsChecked(false)}
-                  />
+              <div className="choice-section__header">
+                <div>
+                  <p>Opcional</p>
+                  <h2>Agregale Rocklets (${rockletsPrice})</h2>
+                </div>
+              </div>
+              <div className="addon-toggle">
+                <button
+                  className={rockletsChecked ? "selected" : ""}
+                  type="button"
+                  onClick={() => setRockletsChecked(true)}
+                >
+                  {rockletsChecked && <FaCheck aria-hidden="true" />}
+                  Sí
+                </button>
+                <button
+                  className={!rockletsChecked ? "selected" : ""}
+                  type="button"
+                  onClick={() => setRockletsChecked(false)}
+                >
                   No
-                </label>
+                </button>
               </div>
             </div>
 
-            <div>
-              <h2>Tu pedido :</h2>
+            <section className="order-summary">
+              <div className="choice-section__header">
+                <div>
+                  <p>Resumen</p>
+                  <h2>Tu pedido</h2>
+                </div>
+              </div>
               <DetailsSection
                 product={product}
                 rocklets={{ price: rockletsPrice, included: rockletsChecked }}
@@ -256,13 +287,14 @@ export default function IceCreamForm({ data, location }) {
                 priceWithAddOns={totalPrice}
                 chosenFlavours={mainMenuChosenFlavours}
               />
-            </div>
+            </section>
           </>
         )}
         <div className="buttons-container">
           <button name="go to cart">Comprar ahora 🛒</button>
           <button name="go to catalog">
-            Seguir comprando <TiArrowBack size={25} className="back-arrow" />
+            <FaChevronLeft aria-hidden="true" />
+            Seguir comprando
           </button>
         </div>
       </form>
@@ -301,6 +333,7 @@ export const query = graphql`
         apiRoute
 
         name
+        imgUrl
         outOfStock
 
         localImage {
