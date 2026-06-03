@@ -3,7 +3,7 @@ import { Link } from "gatsby";
 import { toZonedTime } from "date-fns-tz";
 import { GlobalContext } from "../context/GlobalContext";
 import {
-  FaIceCream,
+  FaClipboardList,
   FaMapMarkerAlt,
   FaShoppingCart,
   FaStore,
@@ -33,7 +33,7 @@ export default function MobileShopNav({ currentPage }) {
   const cartCount = cartItems.reduce((total, item) => total + item.count, 0);
   const isCart = currentPage === "cart";
   const primaryTarget = isCart ? "/catalogo" : "/carrito";
-  const PrimaryIcon = isCart ? FaIceCream : FaShoppingCart;
+  const PrimaryIcon = isCart ? FaClipboardList : FaShoppingCart;
 
   useEffect(() => {
     const updateStatus = () => setIsOpen(getStoreStatus());
@@ -61,10 +61,15 @@ export default function MobileShopNav({ currentPage }) {
 
       <Link
         to={primaryTarget}
-        className="mobile-shop-nav__primary"
+        className={`mobile-shop-nav__primary ${
+          isCart ? "mobile-shop-nav__primary--catalog" : "mobile-shop-nav__primary--cart"
+        }`}
         aria-label={isCart ? "Volver al catalogo" : "Ir al carrito"}
       >
         <PrimaryIcon aria-hidden="true" />
+        <span className="mobile-shop-nav__primary-label">
+          {isCart ? "Catálogo" : "Carrito"}
+        </span>
         {!isCart && cartCount > 0 && (
           <span className="mobile-shop-nav__badge">{cartCount}</span>
         )}

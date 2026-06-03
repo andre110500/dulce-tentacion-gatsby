@@ -10,7 +10,7 @@
     bottom: 0;
     left: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 4.7rem minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 5.25rem minmax(0, 1fr);
     align-items: center;
     min-height: 4.8rem;
     padding: 0.45rem 0.7rem calc(0.45rem + env(safe-area-inset-bottom));
@@ -70,38 +70,77 @@
     align-self: start;
     justify-self: center;
     display: inline-flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 4.45rem;
-    height: 4.45rem;
-    margin-top: -1.55rem;
-    border: 0.32rem solid #ffffff;
+    gap: 0.24rem;
+    width: 5rem;
+    height: 5rem;
+    margin-top: -1.9rem;
+    border: 0.28rem solid #ffffff;
     border-radius: 50%;
-    background: linear-gradient(135deg, #f85b93, #d92569);
-    color: #ffffff;
-    box-shadow: 0 12px 28px rgba(111, 38, 64, 0.3);
+    background:
+      radial-gradient(circle at 32% 20%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 38%),
+      linear-gradient(145deg, #ffffff, #fff1f7 68%);
+    color: #d92569;
+    box-shadow:
+      0 15px 32px rgba(111, 38, 64, 0.35),
+      0 0 0 0.46rem rgba(255, 255, 255, 0.22),
+      0 0 0 0.72rem rgba(255, 211, 226, 0.18);
+    isolation: isolate;
+    transform: translateY(-0.08rem);
   }
 
   .mobile-shop-nav__primary svg {
-    width: 1.85rem;
-    height: 1.85rem;
+    position: relative;
+    z-index: 1;
+    width: 2.05rem;
+    height: 2.05rem;
+    filter: drop-shadow(0 3px 6px rgba(217, 37, 105, 0.18));
+  }
+
+  .mobile-shop-nav__primary--cart {
+    color: #cf1761;
+  }
+
+  .mobile-shop-nav__primary--cart::before {
+    content: "";
+    position: absolute;
+    inset: 0.33rem;
+    z-index: 0;
+    border-radius: inherit;
+    background: rgba(255, 255, 255, 0.28);
+    box-shadow: 0 0 24px rgba(255, 255, 255, 0.42);
+  }
+
+  .mobile-shop-nav__primary-label {
+    position: relative;
+    z-index: 1;
+    color: #2d2027;
+    font-size: 0.56rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0;
   }
 
   .mobile-shop-nav__badge {
     position: absolute;
-    top: 0.25rem;
-    right: 0.35rem;
+    z-index: 2;
+    top: 0.16rem;
+    right: 0.24rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 1.2rem;
-    height: 1.2rem;
-    padding: 0 0.28rem;
+    min-width: 1.42rem;
+    height: 1.42rem;
+    padding: 0 0.32rem;
+    border: 0.12rem solid #ffffff;
     border-radius: 99rem;
-    background: #ffffff;
-    color: #d92569;
-    font-size: 0.72rem;
+    background: #232129;
+    color: #ffffff;
+    font-size: 0.74rem;
     font-weight: 900;
     line-height: 1;
+    box-shadow: 0 5px 12px rgba(35, 33, 41, 0.22);
   }
 }
