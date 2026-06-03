@@ -10,7 +10,7 @@
   --cart-shadow: 0 14px 34px rgba(111, 38, 64, 0.12);
 
   min-height: 100%;
-  padding: clamp(1rem, 3vw, 2rem) 1rem 2.5rem;
+  padding: clamp(0.85rem, 2.5vw, 1.5rem) 1rem 1.25rem;
   background:
     radial-gradient(circle at 8% 18%, rgba(236, 63, 120, 0.08), transparent 18rem),
     radial-gradient(circle at 92% 46%, rgba(236, 63, 120, 0.08), transparent 20rem),
@@ -31,10 +31,9 @@
   }
 
   .banner {
-    margin-bottom: clamp(1rem, 3vw, 1.75rem);
+    margin-bottom: clamp(0.85rem, 2.4vw, 1.35rem);
 
     .container {
-      border-radius: 0.5rem;
       overflow: hidden;
       box-shadow: var(--cart-shadow);
 
@@ -63,11 +62,12 @@
 
   .product-cards {
     display: grid;
-    gap: 0.85rem;
+    gap: 0.75rem;
     width: 100%;
   }
 
   .cart-product-card {
+    position: relative;
     width: 100%;
     display: grid;
     grid-template-columns: 8.5rem minmax(0, 1fr);
@@ -80,6 +80,26 @@
     box-shadow: var(--cart-shadow);
     color: var(--cart-ink);
     font-size: 1rem;
+    transition:
+      border-color 0.18s ease,
+      box-shadow 0.18s ease,
+      transform 0.18s ease;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0.28rem;
+      background: linear-gradient(180deg, #ff72a2, var(--cart-pink));
+      opacity: 0.9;
+      z-index: 1;
+    }
+
+    &:hover {
+      border-color: rgba(236, 63, 120, 0.28);
+      box-shadow: 0 16px 34px rgba(111, 38, 64, 0.16);
+      transform: translateY(-1px);
+    }
   }
 
   .remove {
@@ -118,8 +138,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-    background: linear-gradient(180deg, #ffffff 0%, #fff4f9 100%);
+    padding: 1rem 0.8rem 1rem 1rem;
+    background:
+      radial-gradient(circle at 50% 52%, rgba(236, 63, 120, 0.1), transparent 4.8rem),
+      linear-gradient(180deg, #ffffff 0%, #fff4f9 100%);
+    border-right: 1px solid var(--cart-border);
 
     .gatsby-image-wrapper,
     > img {
@@ -149,7 +172,7 @@
   .cart-product-card .description {
     min-width: 0;
     align-items: flex-start;
-    gap: 0.25rem;
+    gap: 0.3rem;
     padding: 1rem 3.2rem 0.7rem 1rem;
     text-align: left;
   }
@@ -161,6 +184,7 @@
     font-size: 1rem;
     font-weight: 900;
     line-height: 1.18;
+    padding-right: 0.35rem;
   }
 
   .cart-product-card .subtotal {
@@ -168,6 +192,9 @@
     font-size: 1.15rem;
     font-weight: 900;
     line-height: 1.2;
+    padding: 0.18rem 0.55rem;
+    border-radius: 99rem;
+    background: var(--cart-pink-soft);
   }
 
   .cart-product-card .description-string {
@@ -189,6 +216,7 @@
     overflow: hidden;
     background: #ffffff;
     box-shadow: none;
+    justify-self: start;
 
     button {
       width: 2.35rem;
@@ -277,8 +305,8 @@
     position: sticky;
     top: calc(var(--header-height, 0rem) + 0.9rem);
     display: grid;
-    gap: 0.95rem;
-    padding: clamp(1rem, 2.5vw, 1.2rem);
+    gap: 0.75rem;
+    padding: clamp(0.85rem, 2vw, 1rem);
     border: 1px solid var(--cart-border);
     border-radius: 0.5rem;
     background: rgba(255, 255, 255, 0.96);
@@ -299,7 +327,7 @@
 
   .options {
     display: grid;
-    gap: 0.6rem;
+    gap: 0.5rem;
 
     .option {
       display: flex;
@@ -450,7 +478,7 @@
 
   .info {
     width: min(100%, 42rem);
-    margin: 0 auto 2rem;
+    margin: 0 auto 0.5rem;
     color: var(--cart-muted);
     font-size: 0.92rem;
     line-height: 1.45;
@@ -502,16 +530,31 @@
 
 @media (max-width: 720px) {
   #cart {
-    padding: 0.75rem 0.65rem 6rem;
+    padding: 0 0.65rem 5.25rem;
+
+    .banner {
+      width: calc(100% + 1.3rem);
+      margin: 0 -0.65rem 0.85rem;
+
+      .container {
+        box-shadow: none;
+
+        .gatsby-image-wrapper {
+          min-height: 8rem;
+          aspect-ratio: 16 / 5.2;
+        }
+      }
+    }
 
     .cart-product-card {
       grid-template-columns: 5.6rem minmax(0, 1fr);
       min-height: 7.2rem;
+      box-shadow: 0 10px 24px rgba(111, 38, 64, 0.1);
     }
 
     .cart-product-card .image-container {
       min-height: 7.2rem;
-      padding: 0.65rem;
+      padding: 0.65rem 0.5rem 0.65rem 0.65rem;
 
       .gatsby-image-wrapper,
       > img {
@@ -538,7 +581,7 @@
 
     .cart-product-card .quantity {
       width: min(10.5rem, calc(100% - 1.5rem));
-      margin: 0 0.75rem 0.8rem;
+      margin: 0 0.75rem 0.7rem;
     }
 
     .details-section {
