@@ -1,5 +1,5 @@
 import "../assets/scss/catalogo.scss";
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { GlobalContext } from "../context/GlobalContext";
 import { graphql, navigate } from "gatsby";
 import { GatsbyImage, getImage, StaticImage } from "gatsby-plugin-image";
@@ -8,9 +8,12 @@ import {
   FaChevronRight,
   FaHeart,
   FaIceCream,
+  FaMinus,
+  FaPlus,
   FaRegClock,
-  FaRegHeart,
+  FaSearchPlus,
   FaThLarge,
+  FaTimes,
   FaTruck,
 } from "react-icons/fa";
 import { GiIcePop, GiIceCreamCone } from "react-icons/gi";
@@ -259,7 +262,7 @@ function Card({ product }) {
   const { dispatch } = useContext(GlobalContext);
   const image = getImage(product.localImage);
   const buttonRef = useRef(null);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   function handleClick() {
     if (!product.apiRoute) {
@@ -278,17 +281,12 @@ function Card({ product }) {
   return (
     <article className="product-card">
       <button
-        className={`favorite-button ${isFavorite ? "active" : ""}`}
+        className="detail-button"
         type="button"
-        aria-label={isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
-        aria-pressed={isFavorite}
-        onClick={() => setIsFavorite((value) => !value)}
+        aria-label={`Ver detalle de ${cleanProductName(product.name)}`}
+        onClick={() => setIsDetailOpen(true)}
       >
-        {isFavorite ? (
-          <FaHeart aria-hidden="true" />
-        ) : (
-          <FaRegHeart aria-hidden="true" />
-        )}
+        <FaSearchPlus aria-hidden="true" />
       </button>
 
       <div className="image-container">
@@ -298,7 +296,9 @@ function Card({ product }) {
       <div className="description">
         <h3 className="name">{cleanProductName(product.name)}</h3>
         <p className="subtotal">$ {formatPrice(product.price)}</p>
-        {product.description && <p className="description-string">{product.description}</p>}
+        {product.description && (
+          <p className="description-string">{product.description}</p>
+        )}
       </div>
 
       <Button
@@ -306,6 +306,15 @@ function Card({ product }) {
         handleClick={handleClick}
         apiRoute={product.apiRoute}
       />
+
+      {isDetailOpen && (
+        <ProductDetailModal
+          product={product}
+          image={image}
+          dispatch={dispatch}
+          onClose={() => setIsDetailOpen(false)}
+        />
+      )}
     </article>
   );
 }
@@ -318,6 +327,122 @@ function ProductImage({ product, image }) {
   }
 
   return <img src={product.imgUrl} alt={product.name} loading="lazy" />;
+}
+
+function ProductDetailModal({ product, image, dispatch, onClose }) {
+  const [quantity, setQuantity] = useState(1);
+  const productName = cleanProductName(product.name);
+  const hasOptions = Boolean(product.apiRoute);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.body.classList.add("modal-open");
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.classList.remove("modal-open");
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose]);
+
+  function addToCart() {
+    dispatch({
+      type: "add-cart-item",
+      payload: {
+        product: structuredClone(product),
+        quantity,
+      },
+    });
+    onClose();
+  }
+
+  function chooseOptions() {
+    onClose();
+    navigate(`/form?id=${product._id}`);
+  }
+
+  return (
+    <div
+      className="product-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={`product-modal-${product._id}`}
+    >
+      <button
+        className="product-modal__backdrop"
+        type="button"
+        aria-label="Cerrar detalle"
+        onClick={onClose}
+      />
+
+      <div className="product-modal__panel">
+        <button
+          className="product-modal__close"
+          type="button"
+          aria-label="Cerrar detalle"
+          onClick={onClose}
+        >
+          <FaTimes aria-hidden="true" />
+        </button>
+
+        <div className="product-modal__image">
+          <ProductImage product={product} image={image} />
+        </div>
+
+        <div className="product-modal__content">
+          <p className="product-modal__eyebrow">Detalle del producto</p>
+          <h3 id={`product-modal-${product._id}`}>{productName}</h3>
+          <p className="product-modal__price">$ {formatPrice(product.price)}</p>
+          {product.description && (
+            <p className="product-modal__description">{product.description}</p>
+          )}
+
+          {hasOptions ? (
+            <button
+              className="product-modal__primary"
+              type="button"
+              onClick={chooseOptions}
+            >
+              Elegir sabores
+            </button>
+          ) : (
+            <div className="product-modal__simple-buy">
+              <div className="quantity-control" aria-label="Cantidad">
+                <button
+                  type="button"
+                  aria-label="Restar unidad"
+                  onClick={() => setQuantity((value) => Math.max(1, value - 1))}
+                >
+                  <FaMinus aria-hidden="true" />
+                </button>
+                <span>{quantity}</span>
+                <button
+                  type="button"
+                  aria-label="Sumar unidad"
+                  onClick={() => setQuantity((value) => value + 1)}
+                >
+                  <FaPlus aria-hidden="true" />
+                </button>
+              </div>
+
+              <button
+                className="product-modal__primary"
+                type="button"
+                onClick={addToCart}
+              >
+                Agregar {quantity}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function Button({ apiRoute, buttonRef, handleClick }) {
@@ -376,8 +501,8 @@ export const query = graphql`
           localImage {
             childImageSharp {
               gatsbyImageData(
-                width: 220
-                height: 220
+                width: 520
+                height: 520
                 layout: CONSTRAINED
                 placeholder: BLURRED
               )
