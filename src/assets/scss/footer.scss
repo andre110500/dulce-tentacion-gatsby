@@ -1,86 +1,146 @@
 footer {
-  background-color: var(--primary-color);
+  --footer-pink: #ec3f78;
+  --footer-pink-dark: #cf1761;
+  --footer-ink: #232129;
+  --footer-muted: rgba(255, 255, 255, 0.78);
+  --footer-border: rgba(255, 255, 255, 0.18);
+
+  background:
+    linear-gradient(135deg, rgba(207, 23, 97, 0.92), rgba(236, 63, 120, 0.98)),
+    var(--primary-color);
   color: var(--contrast-color);
-  text-align: center;
-  box-shadow: var(--cool-shadow);
+  box-shadow: 0 -12px 28px rgba(111, 38, 64, 0.16);
 
-  text-align: left;
   .content {
-    max-width: var(--universal-width);
-    padding: 3rem 1rem;
-    display: flex;
+    width: min(100%, 72rem);
     margin: auto;
-    flex-direction: column;
-    gap: 3rem;
-  }
-  .container {
-    width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    justify-items: center;
-    column-gap: 4rem;
-    row-gap: 2rem;
-    .subcontainer {
-      width: 100%;
-      max-width: 240px;
+    gap: 1.5rem;
+    padding: clamp(2rem, 4vw, 3rem) clamp(1rem, 3vw, 1.35rem);
+  }
 
-      h4 {
-        margin-bottom: 0.4rem;
-        letter-spacing: 2px;
-      }
+  .container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
 
-      p {
-        font-size: 0.9rem;
-        font-weight: 400;
-      }
+  .subcontainer {
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid var(--footer-border);
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.08);
+
+    h4 {
+      margin: 0 0 0.45rem;
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 900;
+      line-height: 1.2;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    p {
+      margin: 0;
+      color: var(--footer-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      line-height: 1.45;
     }
   }
+
   .icons {
     display: flex;
-
-    justify-content: center;
     flex-wrap: wrap;
-    gap: 4rem;
-  }
-  .copyright {
-    //display: none;
-    grid-column: 1/4;
+    justify-content: center;
+    gap: 0.75rem;
 
-    text-align: center;
-    letter-spacing: 2px;
-    word-spacing: 4px;
-    font-weight: 900;
-    font-size: 0.85rem;
-    line-height: 1.6rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-
-    p:nth-of-type(2),
     a {
-      word-break: break-all;
+      min-height: 2.8rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      padding: 0.7rem 1rem;
+      border: 1px solid var(--footer-border);
+      border-radius: 99rem;
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 900;
+      line-height: 1;
+      transition:
+        background 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease;
+
+      svg {
+        width: 1.05rem;
+        height: 1.05rem;
+        flex: 0 0 auto;
+      }
+
+      &:hover,
+      &:focus-visible {
+        background: #ffffff;
+        color: var(--footer-pink-dark);
+        transform: translateY(-1px);
+      }
     }
+  }
+
+  .copyright {
+    display: flex;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.78rem;
+    font-weight: 800;
+    line-height: 1.3;
+    text-align: center;
+    letter-spacing: 0;
   }
 }
 
 @media (max-width: 800px) {
   footer {
-    .container {
-      grid-template-columns: 1fr 1fr !important;
+    padding-bottom: 5rem;
 
-      .location {
-        text-align: right !important;
-      }
+    .container {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .contact {
+      grid-column: 1 / -1;
     }
   }
 }
 
 @media (max-width: 650px) {
   footer {
+    .content {
+      gap: 1rem;
+      padding-top: 1.6rem;
+      padding-bottom: 1.5rem;
+    }
+
     .container {
-      grid-template-columns: 1fr !important;
-      .location {
-        text-align: left !important;
+      grid-template-columns: 1fr;
+      gap: 0.65rem;
+    }
+
+    .subcontainer {
+      padding: 0.85rem;
+    }
+
+    .icons {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.55rem;
+
+      a {
+        width: 100%;
       }
     }
   }
