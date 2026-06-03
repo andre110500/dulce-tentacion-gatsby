@@ -1,39 +1,48 @@
-import React, { useEffect, useState, useRef } from "react";
-import uniqid from "uniqid";
+import React, { useRef } from "react";
 import { GlobalContext } from "../context/GlobalContext";
-import recycleBin from "../images/recycle-bin.png";
 import { useContext } from "react";
 import { GatsbyImage, getImage } from "gatsby-plugin-image";
 import DetailsSection from "./DetailsSection";
 import { SharedCardDescription } from "./SharedCardSections";
+import { FaMinus, FaPlus, FaTrashAlt } from "react-icons/fa";
 export default function CartItem({ cartItem }) {
   const { dispatch } = useContext(GlobalContext);
-  const [showDetails, setShowDetails] = useState(false);
   const product = cartItem.product;
   const image = getImage(product.localImage);
   const inputRef = useRef(null);
 
   return (
-    <div className="product-card">
-      <img
+    <div className="product-card cart-product-card">
+      <button
         className="remove"
-        alt="remove"
-        src={recycleBin}
+        type="button"
+        aria-label={`Quitar ${product.name} del carrito`}
         onClick={() =>
           dispatch({
             type: "remove-stack",
             payload: { product: product },
           })
         }
-      />
+      >
+        <FaTrashAlt aria-hidden="true" />
+      </button>
       <div className="image-container">
-        <GatsbyImage image={image} alt={product.name} />
+        {image ? (
+          <GatsbyImage image={image} alt={product.name} />
+        ) : product.imgUrl ? (
+          <img src={product.imgUrl} alt={product.name} />
+        ) : (
+          <div className="image-placeholder" aria-hidden="true">
+            DT
+          </div>
+        )}
       </div>
       {!product.chosenFlavours && (
         <>
           <SharedCardDescription product={product} units={cartItem.count} />
           <div className="quantity">
             <button
+              type="button"
               onClick={() => {
                 dispatch({
                   type: "remove-cart-item",
@@ -42,7 +51,7 @@ export default function CartItem({ cartItem }) {
                 inputRef.current.value = cartItem.count - 1;
               }}
             >
-              -
+              <FaMinus aria-hidden="true" />
             </button>
             <input
               ref={inputRef}
@@ -78,6 +87,7 @@ export default function CartItem({ cartItem }) {
               min="0"
             />
             <button
+              type="button"
               onClick={() => {
                 dispatch({
                   type: "add-cart-item",
@@ -86,7 +96,7 @@ export default function CartItem({ cartItem }) {
                 inputRef.current.value = cartItem.count + 1;
               }}
             >
-              +
+              <FaPlus aria-hidden="true" />
             </button>
           </div>
         </>

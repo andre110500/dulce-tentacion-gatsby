@@ -59,11 +59,15 @@ export default function Header() {
               setOpen(e.target.checked);
             }}
           />
-          <label for="checkbox" class="overlay"></label>
+          <label htmlFor="checkbox" className="overlay"></label>
           <Sidebar />
 
           <CartButton />
-          <label className="hamburger-menu" htmlFor="checkbox">
+          <label
+            className="hamburger-menu"
+            htmlFor="checkbox"
+            aria-label="Abrir menú"
+          >
             <Hamburger toggled={isOpen} size={24} toggle={setOpen} />
           </label>
         </div>
@@ -118,7 +122,7 @@ function Tabs() {
   return (
     <>
       {tabsObj.map((tab) => (
-        <Link to={`/${tab.toLowerCase()}`} activeClassName="active">
+        <Link key={tab} to={`/${tab.toLowerCase()}`} activeClassName="active">
           {tab}
         </Link>
       ))}

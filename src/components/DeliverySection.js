@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function DeliverySection({ setDeliveryInfo, deliveryInfo }) {
   useEffect(() => {
@@ -10,7 +10,6 @@ export default function DeliverySection({ setDeliveryInfo, deliveryInfo }) {
   function checkValidity(e) {
     const isValid = e.target.validity.valid;
 
-    //const checksPassed = checks.filter((check) => validity[check]).length === 0;
     if (!isValid) {
       e.target.classList.add("invalid");
     } else {
@@ -25,7 +24,7 @@ export default function DeliverySection({ setDeliveryInfo, deliveryInfo }) {
           className={`option ${isTakeAwayChecked && "checked"}`}
           htmlFor="pickup"
         >
-          <span>Retiro en el local 🏪</span>
+          <span>Retiro en el local</span>
           <input
             type="radio"
             name="fullfillment-method"
@@ -35,7 +34,6 @@ export default function DeliverySection({ setDeliveryInfo, deliveryInfo }) {
             required
             onChange={() => {
               setDeliveryInfo((prev) => ({ ...prev, isChecked: false }));
-
               setIsTakeAwayChecked(true);
             }}
           />
@@ -45,11 +43,10 @@ export default function DeliverySection({ setDeliveryInfo, deliveryInfo }) {
           className={`option ${deliveryInfo.isChecked && "checked"}`}
           htmlFor="delivery"
         >
-          <span>Delivery 🛵</span>
+          <span>Delivery</span>
           <input
             onChange={() => {
               setDeliveryInfo((prev) => ({ ...prev, isChecked: true }));
-
               setIsTakeAwayChecked(false);
             }}
             checked={deliveryInfo.isChecked === true}
@@ -73,28 +70,25 @@ export default function DeliverySection({ setDeliveryInfo, deliveryInfo }) {
               required
               onBlur={checkValidity}
               onChange={(e) => {
-                const selectedValue = e.target.value;
-
                 setDeliveryInfo((prev) => ({
                   ...prev,
-                  neighborhood: selectedValue,
+                  neighborhood: e.target.value,
                 }));
               }}
             />
 
-            <div className="error">Seleciona un barrio</div>
+            <div className="error">Seleccioná un barrio</div>
           </div>
 
           <div className="container">
             <input
               type="text"
-              placeholder="Direccion *"
+              placeholder="Dirección *"
               autoComplete="street-address"
               required
               onBlur={checkValidity}
               defaultValue={deliveryInfo.address}
               onChange={(event) => {
-                console.log(`is checked is : ${deliveryInfo?.isChecked}`);
                 setDeliveryInfo((prev) => ({
                   ...prev,
                   address: event.target.value,
@@ -102,7 +96,7 @@ export default function DeliverySection({ setDeliveryInfo, deliveryInfo }) {
               }}
             />
 
-            <div className="error">Escribe una direccion</div>
+            <div className="error">Escribí una dirección</div>
           </div>
 
           <div className="container">
@@ -120,13 +114,13 @@ export default function DeliverySection({ setDeliveryInfo, deliveryInfo }) {
               }
             />
 
-            <div className="error">Escribe las entrecalles</div>
+            <div className="error">Escribí las entrecalles</div>
           </div>
 
           <textarea
             id="aditional-info"
-            placeholder="Opcional:
-                                                          Descripcion de la casa, ejemplo: frente rojo, puerta negra de chapa."
+            placeholder={`Opcional:
+Descripción de la casa, ejemplo: frente rojo, puerta negra de chapa.`}
             defaultValue={deliveryInfo.aditionalInfo}
             onChange={(event) =>
               setDeliveryInfo((prev) => ({

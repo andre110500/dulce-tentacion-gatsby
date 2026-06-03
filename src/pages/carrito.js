@@ -161,8 +161,8 @@ export default function Cart() {
 
       // Show success message and continue with the flow
       Swal.fire({
-        title: "Gracias!💗",
-        html: `En caso de no haberse enviado el mensaje con tu pedido reinténtalo <a href="${whatsappLink}" target="_blank">ACA</a>.`,
+        title: "Gracias!",
+        html: `En caso de no haberse enviado el mensaje con tu pedido reintentalo <a href="${whatsappLink}" target="_blank">acá</a>.`,
         icon: "info",
         confirmButtonText: "OK",
       });
@@ -213,7 +213,7 @@ export default function Cart() {
   return (
     <main id="cart">
       <div className="content">
-        <BannerSection h2="Aca podes completar tu pedido" h1="Carrito">
+        <BannerSection h2="Acá podés completar tu pedido" h1="Carrito">
           <StaticImage src="../images/cart-banner.jpg" />
         </BannerSection>
 
@@ -253,7 +253,7 @@ export default function Cart() {
                     className={`option ${paymentMethod === "cash" && "checked"
                       }`}
                   >
-                    <span>Efectivo 💸</span>
+                    <span>Efectivo</span>
                     <input
                       type="radio"
                       name="payment"
@@ -269,7 +269,7 @@ export default function Cart() {
                     className={`option ${paymentMethod === "transfer" && "checked"
                       }`}
                   >
-                    <span>Transferencia 📱</span>
+                    <span>Transferencia</span>
                     <input
                       type="radio"
                       name="payment"
@@ -311,9 +311,9 @@ export default function Cart() {
               </form>
             </div>
             <p className="info">
-              Al precionar "Finalizar", se abrira un chat de whatsapp con toda
-              la info de tu pedido pre-cargada, solo deberas enviarla y nosotros
-              haremos el resto 😉
+              Al presionar "Finalizar", se abrirá un chat de WhatsApp con toda
+              la info de tu pedido pre-cargada. Solo deberás enviarla y nosotros
+              haremos el resto.
             </p>
           </>
         ) : (
@@ -324,7 +324,7 @@ export default function Cart() {
               placeholder="blurred"
               class="sad-shopping-cart"
             />
-            <p>No hay nada aca, porque no agregas algo?</p>
+            <p>No hay nada acá, ¿por qué no agregás algo?</p>
             <StaticImage
               src="../images/anime-girl-thinking.png"
               placeholder="blurred"
