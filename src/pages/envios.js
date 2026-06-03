@@ -1,112 +1,320 @@
 import "../assets/scss/envios.scss";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, navigate } from "gatsby";
 import {
   FaCheckCircle,
+  FaCopy,
   FaLocationArrow,
   FaMapMarkerAlt,
   FaMotorcycle,
+  FaSearch,
   FaShoppingCart,
 } from "react-icons/fa";
+import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
+import { point, polygon } from "@turf/helpers";
+import DeliveryMap from "../components/DeliveryMap";
 import MobileShopNav from "../components/MobileShopNav";
+import { deliveryAddresses } from "../data/delivery-addresses";
+import { deliveryBlocks } from "../data/delivery-blocks";
+import { deliveryStreetRules } from "../data/delivery-street-rules";
+import { deliveryZones } from "../data/delivery-zones";
 
 const STORAGE_KEY = "deliveryZoneQuote";
-
-const mapBounds = {
-  north: -34.735,
-  south: -34.825,
-  west: -58.91,
-  east: -58.765,
-};
-
-const deliveryZones = [
-  {
-    id: "centro",
-    name: "Zona Centro",
-    fee: 900,
-    color: "#f54983",
-    description: "Casco centrico y alrededores cercanos.",
-    polygon: [
-      [-34.759, -58.852],
-      [-34.755, -58.81],
-      [-34.783, -58.795],
-      [-34.797, -58.826],
-      [-34.787, -58.858],
-    ],
-  },
-  {
-    id: "media",
-    name: "Zona Media",
-    fee: 1300,
-    color: "#13a6a6",
-    description: "Barrios dentro del radio habitual de reparto.",
-    polygon: [
-      [-34.747, -58.879],
-      [-34.739, -58.803],
-      [-34.789, -58.775],
-      [-34.818, -58.819],
-      [-34.797, -58.89],
-    ],
-  },
-  {
-    id: "lejana",
-    name: "Zona Extendida",
-    fee: 1800,
-    color: "#f6a623",
-    description: "Puntos mas alejados dentro de Marcos Paz.",
-    polygon: [
-      [-34.738, -58.902],
-      [-34.731, -58.784],
-      [-34.812, -58.758],
-      [-34.829, -58.839],
-      [-34.802, -58.912],
-    ],
-  },
-];
-
-function projectPoint([lat, lng]) {
-  const x = ((lng - mapBounds.west) / (mapBounds.east - mapBounds.west)) * 100;
-  const y = ((mapBounds.north - lat) / (mapBounds.north - mapBounds.south)) * 100;
-
-  return [x, y];
-}
-
-function polygonToPoints(polygon) {
-  return polygon.map((point) => projectPoint(point).join(",")).join(" ");
-}
-
-function isPointInPolygon(point, polygon) {
-  const [lat, lng] = point;
-  let inside = false;
-
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const [latI, lngI] = polygon[i];
-    const [latJ, lngJ] = polygon[j];
-    const intersects =
-      lngI > lng !== lngJ > lng &&
-      lat < ((latJ - latI) * (lng - lngI)) / (lngJ - lngI) + latI;
-
-    if (intersects) inside = !inside;
-  }
-
-  return inside;
-}
+const ADDRESS_HISTORY_KEY = "deliveryAddressHistory";
+const MIN_CONFIDENT_ACCURACY_METERS = 250;
+const MAX_ADDRESS_HISTORY_ITEMS = 12;
 
 function findZone(coords) {
-  return deliveryZones.find((zone) => isPointInPolygon(coords, zone.polygon));
+  const [lat, lng] = coords;
+  const userPoint = point([lng, lat]);
+
+  return deliveryZones.find((zone) =>
+    booleanPointInPolygon(userPoint, polygon(zone.geometry.coordinates))
+  );
 }
 
 function formatPrice(price) {
   return new Intl.NumberFormat("es-AR").format(price);
 }
 
+function normalizeText(value) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toUpperCase();
+}
+
+function normalizeStreetName(value) {
+  return normalizeText(value).replace(/^(EL|LA|LOS|LAS)\s+/, "");
+}
+
+function parseAddress(value) {
+  const normalized = normalizeText(value);
+  const match = normalized.match(/^(.+?)\s+(\d+[A-Z]?)$/);
+
+  if (!match) return null;
+
+  return {
+    street: normalizeStreetName(match[1].replace(/^C\s+/, "")),
+    number: match[2],
+  };
+}
+
+function findAddressInLocalList(value) {
+  const parsed = parseAddress(value);
+  if (!parsed) return null;
+
+  return deliveryAddresses.find(
+    (item) =>
+      normalizeStreetName(item.street) === parsed.street &&
+      String(item.number).toUpperCase() === parsed.number
+  );
+}
+
+function toAddressNumber(value) {
+  const number = Number.parseInt(String(value).replace(/\D/g, ""), 10);
+  return Number.isFinite(number) ? number : null;
+}
+
+function distanceBetween(a, b) {
+  const earthRadiusMeters = 6371000;
+  const lat1 = (a[0] * Math.PI) / 180;
+  const lat2 = (b[0] * Math.PI) / 180;
+  const deltaLat = ((b[0] - a[0]) * Math.PI) / 180;
+  const deltaLng = ((b[1] - a[1]) * Math.PI) / 180;
+  const haversine =
+    Math.sin(deltaLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLng / 2) ** 2;
+
+  return earthRadiusMeters * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
+}
+
+function interpolateCoords(coords, progress) {
+  if (coords.length === 1) return coords[0];
+
+  const segmentLengths = coords.slice(1).map((coord, index) => distanceBetween(coords[index], coord));
+  const totalLength = segmentLengths.reduce((sum, length) => sum + length, 0);
+
+  if (!totalLength) return coords[0];
+
+  let targetDistance = totalLength * progress;
+
+  for (let index = 0; index < segmentLengths.length; index += 1) {
+    const segmentLength = segmentLengths[index];
+
+    if (targetDistance <= segmentLength) {
+      const segmentProgress = segmentLength ? targetDistance / segmentLength : 0;
+      const start = coords[index];
+      const end = coords[index + 1];
+
+      return [
+        start[0] + (end[0] - start[0]) * segmentProgress,
+        start[1] + (end[1] - start[1]) * segmentProgress,
+      ];
+    }
+
+    targetDistance -= segmentLength;
+  }
+
+  return coords[coords.length - 1];
+}
+
+function interpolateAddressPoints(addressPoints, requestedNumber) {
+  const sortedPoints = [...addressPoints]
+    .filter((item) => Number.isFinite(item.number) && item.coords?.length === 2)
+    .sort((a, b) => a.number - b.number);
+
+  if (sortedPoints.length < 2) return null;
+
+  const firstPoint = sortedPoints[0];
+  const lastPoint = sortedPoints[sortedPoints.length - 1];
+
+  if (requestedNumber < firstPoint.number || requestedNumber > lastPoint.number) {
+    return null;
+  }
+
+  if (requestedNumber === lastPoint.number) return lastPoint.coords;
+
+  const startIndex = sortedPoints.findIndex(
+    (item, index) =>
+      requestedNumber >= item.number &&
+      sortedPoints[index + 1] &&
+      requestedNumber < sortedPoints[index + 1].number
+  );
+
+  if (startIndex === -1) return null;
+
+  const startPoint = sortedPoints[startIndex];
+  const endPoint = sortedPoints[startIndex + 1];
+  const progress =
+    (requestedNumber - startPoint.number) / (endPoint.number - startPoint.number);
+
+  return [
+    startPoint.coords[0] + (endPoint.coords[0] - startPoint.coords[0]) * progress,
+    startPoint.coords[1] + (endPoint.coords[1] - startPoint.coords[1]) * progress,
+  ];
+}
+
+function interpolateBlockSegment(segment, requestedNumber) {
+  const minNumber = Math.min(segment.numberStart, segment.numberEnd);
+  const maxNumber = Math.max(segment.numberStart, segment.numberEnd);
+
+  if (
+    requestedNumber < minNumber ||
+    requestedNumber > maxNumber ||
+    !segment.startCoords?.length ||
+    !segment.endCoords?.length
+  ) {
+    return null;
+  }
+
+  const rangeSize = Math.abs(segment.numberEnd - segment.numberStart) + 1;
+  const progress = Math.abs(requestedNumber - segment.numberStart) / rangeSize;
+
+  return [
+    segment.startCoords[0] + (segment.endCoords[0] - segment.startCoords[0]) * progress,
+    segment.startCoords[1] + (segment.endCoords[1] - segment.startCoords[1]) * progress,
+  ];
+}
+
+function findAddressInBlocks(parsed, requestedNumber) {
+  if (!parsed || requestedNumber === null) return null;
+
+  for (const block of deliveryBlocks) {
+    const blockSides = block.sides || block.streetSegments || [];
+    const segment = blockSides.find(
+      (item) =>
+        normalizeStreetName(item.street) === parsed.street &&
+        requestedNumber >= Math.min(item.numberStart, item.numberEnd) &&
+        requestedNumber <= Math.max(item.numberStart, item.numberEnd)
+    );
+
+    if (!segment) continue;
+
+    const coords = interpolateBlockSegment(segment, requestedNumber);
+    if (!coords) continue;
+
+    return {
+      street: segment.street,
+      number: parsed.number,
+      label: `${segment.street} ${parsed.number}, Marcos Paz`,
+      coords,
+      source: "manzana-local",
+      blockId: block.id,
+      blockLabel: block.label,
+      blockSource: block.source,
+    };
+  }
+
+  return null;
+}
+
+function streetHasBlockSides(street) {
+  return deliveryBlocks.some((block) => {
+    const blockSides = block.sides || block.streetSegments || [];
+
+    return blockSides.some((side) => normalizeStreetName(side.street) === street);
+  });
+}
+
+function buildAddressPointsFromRule(rule) {
+  if (!rule.coords?.length || !Number.isFinite(rule.numberStart) || !Number.isFinite(rule.numberEnd)) {
+    return [];
+  }
+
+  const minNumber = Math.min(rule.numberStart, rule.numberEnd);
+  const maxNumber = Math.max(rule.numberStart, rule.numberEnd);
+  const points = [];
+
+  for (let number = minNumber; number < maxNumber; number += 100) {
+    const progress =
+      (number - rule.numberStart) / (rule.numberEnd - rule.numberStart);
+
+    points.push({
+      number,
+      coords: interpolateCoords(rule.coords, Math.max(0, Math.min(1, progress))),
+    });
+  }
+
+  points.push({
+    number: maxNumber,
+    coords: interpolateCoords(
+      rule.coords,
+      Math.max(0, Math.min(1, (maxNumber - rule.numberStart) / (rule.numberEnd - rule.numberStart)))
+    ),
+  });
+
+  return points;
+}
+
+function findAddressByStreetRule(value) {
+  const parsed = parseAddress(value);
+  const requestedNumber = toAddressNumber(parsed?.number);
+
+  if (!parsed || requestedNumber === null) return null;
+
+  const blockResult = findAddressInBlocks(parsed, requestedNumber);
+  if (blockResult) return blockResult;
+
+  if (streetHasBlockSides(parsed.street)) return null;
+
+  const rule = deliveryStreetRules.find(
+    (item) =>
+      [item.street, ...(item.aliases || [])].some(
+        (streetName) => normalizeStreetName(streetName) === parsed.street
+      ) &&
+      ((item.addressPoints?.length && item.addressPoints.length >= 2) ||
+        (item.coords?.length &&
+          Number.isFinite(item.numberStart) &&
+          Number.isFinite(item.numberEnd)))
+  );
+
+  if (!rule) return null;
+
+  const addressPoints = rule.addressPoints?.length
+    ? rule.addressPoints
+    : buildAddressPointsFromRule(rule);
+  const coords = interpolateAddressPoints(addressPoints, requestedNumber);
+
+  if (!coords) return null;
+
+  return {
+    street: rule.street,
+    number: parsed.number,
+    label: `${rule.label || rule.street} ${parsed.number}, Marcos Paz`,
+    coords,
+    source: "regla-local",
+  };
+}
+
+function buildAddressEntry(address, coords) {
+  const parsed = parseAddress(address);
+  const street = parsed?.street || normalizeText(address.replace(/\d+/g, ""));
+  const number = parsed?.number || "";
+
+  return `{
+  street: "${street}",
+  number: "${number}",
+  label: "${address.trim()}, Marcos Paz",
+  coords: [${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}],
+},`;
+}
+
 export default function Envios() {
   const [address, setAddress] = useState("");
+  const [addressHistory, setAddressHistory] = useState([]);
   const [reference, setReference] = useState("");
   const [coords, setCoords] = useState(null);
+  const [locationAccuracy, setLocationAccuracy] = useState(null);
   const [selectedZoneId, setSelectedZoneId] = useState("");
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [lookupResult, setLookupResult] = useState(null);
+  const [copyNotice, setCopyNotice] = useState("");
 
   const detectedZone = useMemo(() => {
     if (!coords) return null;
@@ -115,10 +323,61 @@ export default function Envios() {
 
   const selectedZone = deliveryZones.find((zone) => zone.id === selectedZoneId);
   const activeZone = detectedZone || selectedZone;
-  const markerPoint = coords ? projectPoint(coords) : null;
+
+  useEffect(() => {
+    try {
+      const savedHistory = JSON.parse(localStorage.getItem(ADDRESS_HISTORY_KEY) || "[]");
+
+      if (Array.isArray(savedHistory)) {
+        setAddressHistory(savedHistory.filter(Boolean).slice(0, MAX_ADDRESS_HISTORY_ITEMS));
+      }
+    } catch {
+      setAddressHistory([]);
+    }
+  }, []);
+
+  function saveAddressToHistory(value) {
+    const cleanedValue = value.trim();
+    if (!cleanedValue) return;
+
+    const nextHistory = [
+      cleanedValue,
+      ...addressHistory.filter(
+        (item) => normalizeText(item) !== normalizeText(cleanedValue)
+      ),
+    ].slice(0, MAX_ADDRESS_HISTORY_ITEMS);
+
+    setAddressHistory(nextHistory);
+    localStorage.setItem(ADDRESS_HISTORY_KEY, JSON.stringify(nextHistory));
+  }
+
+  const handleMapPick = useCallback((pickedCoords) => {
+    setCoords(pickedCoords);
+    setLocationAccuracy(null);
+    setSelectedZoneId("");
+    setStatus("ready");
+    setError("");
+    setNotice("Punto ajustado en el mapa.");
+    setLookupResult((prev) =>
+      prev
+        ? {
+            ...prev,
+            source: "manual",
+            label: "Punto marcado manualmente",
+            coords: pickedCoords,
+          }
+        : {
+            source: "manual",
+            label: "Punto marcado manualmente",
+            coords: pickedCoords,
+          }
+    );
+    setCopyNotice("");
+  }, []);
 
   function requestLocation() {
     setError("");
+    setNotice("");
 
     if (!navigator.geolocation) {
       setError("Tu navegador no permite compartir ubicacion.");
@@ -134,8 +393,15 @@ export default function Envios() {
         ];
 
         setCoords(currentCoords);
+        setLocationAccuracy(position.coords.accuracy);
         setSelectedZoneId("");
         setStatus("ready");
+        setNotice("Revisa el marcador. Si no esta exacto, movelo en el mapa.");
+        setLookupResult({
+          source: "browser",
+          label: "Ubicacion del navegador",
+          coords: currentCoords,
+        });
       },
       () => {
         setStatus("idle");
@@ -143,6 +409,63 @@ export default function Envios() {
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );
+  }
+
+  function searchAddress() {
+    const cleanedAddress = address.trim();
+    if (!cleanedAddress) {
+      setError("Escribi una direccion para buscarla en el mapa.");
+      return;
+    }
+
+    setError("");
+    setNotice("");
+    setCopyNotice("");
+
+    const result = findAddressInLocalList(cleanedAddress) || findAddressByStreetRule(cleanedAddress);
+
+    if (!result) {
+      setCoords(null);
+      setLocationAccuracy(null);
+      setStatus("idle");
+      setLookupResult({
+        coords: null,
+        source: "base-local",
+        label: cleanedAddress,
+      });
+      setError(
+        "Esa direccion todavia no esta cargada ni calibrada en la base local. Marca el punto exacto en el mapa y copia la entrada para agregarla."
+      );
+      return;
+    }
+
+    setCoords(result.coords);
+    setLocationAccuracy(null);
+    setSelectedZoneId("");
+    setStatus("ready");
+    setNotice(
+      result.source === "manzana-local"
+        ? "Direccion ubicada por manzana local."
+        : result.source === "regla-local"
+        ? "Direccion estimada con una regla local de calle."
+        : "Direccion encontrada en la base local."
+    );
+    setLookupResult({
+      coords: result.coords,
+      source: result.source || "base-local",
+      label: result.label,
+      blockLabel: result.blockLabel,
+      blockSource: result.blockSource,
+    });
+    saveAddressToHistory(cleanedAddress);
+  }
+
+  async function copyAddressEntry() {
+    if (!address.trim() || !coords) return;
+
+    const entry = buildAddressEntry(address, coords);
+    await navigator.clipboard.writeText(entry);
+    setCopyNotice("Entrada copiada.");
   }
 
   function saveQuote() {
@@ -194,10 +517,28 @@ export default function Envios() {
               <input
                 type="text"
                 value={address}
+                list="saved-delivery-addresses"
                 placeholder="Ej: Sarmiento 1234"
-                onChange={(event) => setAddress(event.target.value)}
+                onChange={(event) => {
+                  setAddress(event.target.value);
+                  setSelectedZoneId("");
+                  setCoords(null);
+                  setLocationAccuracy(null);
+                  setNotice("");
+                  setLookupResult(null);
+                }}
               />
+              <datalist id="saved-delivery-addresses">
+                {addressHistory.map((item) => (
+                  <option key={item} value={item} />
+                ))}
+              </datalist>
             </label>
+
+            <button type="button" className="search-address-button" onClick={searchAddress}>
+              <FaSearch aria-hidden="true" />
+              Buscar direccion
+            </button>
 
             <label>
               Referencia
@@ -221,7 +562,10 @@ export default function Envios() {
                 onChange={(event) => {
                   setSelectedZoneId(event.target.value);
                   setCoords(null);
+                  setLocationAccuracy(null);
                   setError("");
+                  setNotice("");
+                  setLookupResult(null);
                 }}
               >
                 <option value="">Seleccionar si no usas ubicacion</option>
@@ -235,6 +579,44 @@ export default function Envios() {
           </div>
 
           {error && <p className="shipping-alert">{error}</p>}
+          {notice && <p className="shipping-alert shipping-alert--soft">{notice}</p>}
+
+          {lookupResult && (
+            <div className="shipping-debug">
+              <strong>Resultado de busqueda</strong>
+              <span>Fuente: {lookupResult.source}</span>
+              {lookupResult.label && <span>{lookupResult.label}</span>}
+              {lookupResult.blockLabel && <span>{lookupResult.blockLabel}</span>}
+              {lookupResult.blockSource && <span>Datos: {lookupResult.blockSource}</span>}
+              {lookupResult.coords ? (
+                <span>
+                  Lat: {lookupResult.coords[0].toFixed(6)} / Lon:{" "}
+                  {lookupResult.coords[1].toFixed(6)}
+                </span>
+              ) : (
+                <span>Sin coordenadas</span>
+              )}
+            </div>
+          )}
+
+          {address.trim() && coords && (
+            <div className="shipping-debug">
+              <strong>Entrada para base local</strong>
+              <code>{buildAddressEntry(address, coords)}</code>
+              <button type="button" onClick={copyAddressEntry}>
+                <FaCopy aria-hidden="true" />
+                Copiar entrada
+              </button>
+              {copyNotice && <span>{copyNotice}</span>}
+            </div>
+          )}
+
+          {locationAccuracy > MIN_CONFIDENT_ACCURACY_METERS && (
+            <p className="shipping-alert shipping-alert--soft">
+              La ubicacion del navegador es aproximada. Si no coincide, busca tu direccion
+              manualmente.
+            </p>
+          )}
 
           {activeZone ? (
             <div className="shipping-result shipping-result--ok">
@@ -272,30 +654,15 @@ export default function Envios() {
         </div>
 
         <div className="shipping-map" aria-label="Mapa de zonas de envio">
-          <svg viewBox="0 0 100 100" role="img">
-            <rect width="100" height="100" rx="6" />
-            <path d="M8 25 C28 16 38 34 58 24 S86 16 94 29" />
-            <path d="M12 73 C30 60 48 76 66 61 S84 51 92 66" />
-            <path d="M25 8 L33 92" />
-            <path d="M69 7 L61 94" />
-            <path d="M7 51 L93 47" />
-
-            {[...deliveryZones].reverse().map((zone) => (
-              <polygon
-                key={zone.id}
-                points={polygonToPoints(zone.polygon)}
-                fill={zone.color}
-                className={activeZone?.id === zone.id ? "is-active" : ""}
-              />
-            ))}
-
-            {markerPoint && (
-              <g className="shipping-marker" transform={`translate(${markerPoint[0]} ${markerPoint[1]})`}>
-                <circle r="3.2" />
-                <circle r="1.2" />
-              </g>
-            )}
-          </svg>
+          <p className="shipping-map__hint">
+            Toca el mapa o arrastra el pin para marcar el domicilio exacto.
+          </p>
+          <DeliveryMap
+            zones={deliveryZones}
+            activeZoneId={activeZone?.id}
+            userCoords={coords}
+            onMapPick={handleMapPick}
+          />
 
           <div className="shipping-zones">
             {deliveryZones.map((zone) => (
