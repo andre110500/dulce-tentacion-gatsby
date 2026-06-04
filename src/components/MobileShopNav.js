@@ -7,11 +7,8 @@ import {
   FaMapMarkerAlt,
   FaShoppingCart,
   FaStore,
-  FaWhatsapp,
 } from "react-icons/fa";
 
-const WHATSAPP_URL =
-  "https://api.whatsapp.com/send?phone=5491121690959&text=Hola%20vengo%20de%20la%20pagina%20web%20oficial%20!";
 const MAPS_URL =
   "https://www.google.com/maps/search/?api=1&query=El%20Malambo%201733%2C%20Marcos%20Paz";
 const TIME_ZONE = "America/Argentina/Buenos_Aires";
@@ -30,6 +27,7 @@ function getStoreStatus() {
 export default function MobileShopNav({ currentPage }) {
   const { cartItems } = useContext(GlobalContext);
   const [isOpen, setIsOpen] = useState(false);
+  const [showHours, setShowHours] = useState(false);
   const cartCount = cartItems.reduce((total, item) => total + item.count, 0);
   const isCart = currentPage === "cart";
   const primaryTarget = isCart ? "/catalogo" : "/carrito";
@@ -48,14 +46,15 @@ export default function MobileShopNav({ currentPage }) {
     <nav className="mobile-shop-nav" aria-label="Accesos rapidos de compra">
       <a
         href={MAPS_URL}
-        className="mobile-shop-nav__info"
+        className="mobile-shop-nav__info mobile-shop-nav__info--delivery"
         target="_blank"
         rel="noopener noreferrer"
       >
         <FaMapMarkerAlt aria-hidden="true" />
         <span>
           <strong>Entrega en</strong>
-          Marcos Paz
+          <span>Marcos Paz</span>
+          <small>y Santa Isabel</small>
         </span>
       </a>
 
@@ -68,27 +67,37 @@ export default function MobileShopNav({ currentPage }) {
       >
         <PrimaryIcon aria-hidden="true" />
         <span className="mobile-shop-nav__primary-label">
-          {isCart ? "Catálogo" : "Carrito"}
+          {isCart ? "Menu" : "Carrito"}
         </span>
         {!isCart && cartCount > 0 && (
           <span className="mobile-shop-nav__badge">{cartCount}</span>
         )}
       </Link>
 
-      <a
-        href={WHATSAPP_URL}
-        className={`mobile-shop-nav__info ${
+      <button
+        type="button"
+        className={`mobile-shop-nav__info mobile-shop-nav__info--status ${
           isOpen ? "mobile-shop-nav__info--open" : "mobile-shop-nav__info--closed"
         }`}
-        target="_blank"
-        rel="noopener noreferrer"
+        aria-label="Ver horarios de atencion"
+        aria-expanded={showHours}
+        aria-controls="mobile-shop-nav-hours"
+        onClick={() => setShowHours((currentValue) => !currentValue)}
       >
-        {isOpen ? <FaWhatsapp aria-hidden="true" /> : <FaStore aria-hidden="true" />}
+        <FaStore aria-hidden="true" />
         <span>
-          <strong>{isOpen ? "Abierto" : "Cerrado"}</strong>
-          {isOpen ? "Pedinos ahora" : "Volvemos pronto"}
+          <strong>Horarios</strong>
+          <span>{isOpen ? "Abierto ahora" : "Ver atencion"}</span>
         </span>
-      </a>
+      </button>
+
+      {showHours && (
+        <div className="mobile-shop-nav__hours" id="mobile-shop-nav-hours">
+          <strong>Horarios</strong>
+          <span>Lun a vie: 20:30 a 24</span>
+          <span>Sab y dom: 13 a 24</span>
+        </div>
+      )}
     </nav>
   );
 }

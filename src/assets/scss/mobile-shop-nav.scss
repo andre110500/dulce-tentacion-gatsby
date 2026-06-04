@@ -10,7 +10,7 @@
     bottom: 0;
     left: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 5.25rem minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 5.35rem minmax(0, 1fr);
     align-items: center;
     min-height: 4.8rem;
     padding: 0.45rem 0.7rem calc(0.45rem + env(safe-area-inset-bottom));
@@ -25,40 +25,116 @@
   }
 
   .mobile-shop-nav__info {
-    display: flex;
+    border: 0;
+    background: transparent;
+    font-family: inherit;
+    display: grid;
+    grid-template-columns: auto minmax(0, max-content);
     align-items: center;
-    justify-content: flex-start;
-    gap: 0.5rem;
+    justify-content: center;
+    gap: 0.48rem;
     min-width: 0;
     min-height: 3.25rem;
     color: #ffffff;
     font-size: 0.72rem;
     font-weight: 600;
     line-height: 1.12;
+    text-align: left;
   }
 
-  .mobile-shop-nav__info:last-child {
-    justify-content: flex-end;
-    text-align: right;
+  .mobile-shop-nav__info--delivery {
+    justify-self: start;
+    padding-right: 0.42rem;
   }
 
   .mobile-shop-nav__info svg {
-    width: 1.55rem;
-    height: 1.55rem;
-    flex: 0 0 1.55rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    flex: 0 0 1.5rem;
   }
 
-  .mobile-shop-nav__info span {
+  .mobile-shop-nav__info > span {
     display: flex;
     flex-direction: column;
     min-width: 0;
     overflow: hidden;
   }
 
+  .mobile-shop-nav__info small {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.62rem;
+    font-weight: 700;
+    line-height: 1.05;
+  }
+
   .mobile-shop-nav__info strong {
     font-size: 0.82rem;
     font-weight: 900;
     line-height: 1.1;
+  }
+
+  .mobile-shop-nav__info--status {
+    appearance: none;
+    justify-self: center;
+    width: 100%;
+    padding-left: 0.48rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    cursor: pointer;
+  }
+
+  .mobile-shop-nav__info--status svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-basis: 1.5rem;
+  }
+
+  .mobile-shop-nav__info--status span span {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.62rem;
+    font-weight: 700;
+    line-height: 1.05;
+  }
+
+  .mobile-shop-nav__hours {
+    position: absolute;
+    right: 0.72rem;
+    bottom: calc(4.95rem + env(safe-area-inset-bottom));
+    display: grid;
+    gap: 0.16rem;
+    width: min(12.5rem, calc(100vw - 1.4rem));
+    padding: 0.72rem 0.82rem;
+    border: 1px solid rgba(207, 23, 97, 0.16);
+    border-radius: 0.65rem;
+    background: #ffffff;
+    color: #2d2027;
+    box-shadow: 0 14px 32px rgba(111, 38, 64, 0.2);
+  }
+
+  .mobile-shop-nav__hours::after {
+    content: "";
+    position: absolute;
+    right: 2.15rem;
+    bottom: -0.42rem;
+    width: 0.84rem;
+    height: 0.84rem;
+    background: #ffffff;
+    transform: rotate(45deg);
+  }
+
+  .mobile-shop-nav__hours strong {
+    color: #cf1761;
+    font-size: 0.78rem;
+    font-weight: 900;
+    line-height: 1.1;
+  }
+
+  .mobile-shop-nav__hours span {
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.2;
   }
 
   .mobile-shop-nav__info--closed {
