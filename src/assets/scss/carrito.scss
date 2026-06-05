@@ -17,6 +17,10 @@
     #ffffff;
   color: var(--cart-ink);
 
+  &.cart-empty-page {
+    padding-bottom: 0;
+  }
+
   button,
   input,
   label,
@@ -28,6 +32,13 @@
     @include mainContent();
     gap: clamp(1rem, 2vw, 1.35rem);
     max-width: 58rem;
+  }
+
+  &.cart-empty-page > .content {
+    gap: 0;
+    min-height: auto;
+    overflow-x: visible;
+    overflow-y: visible;
   }
 
   .banner {
@@ -488,24 +499,52 @@
   .empty {
     display: grid;
     justify-items: center;
-    gap: 1.2rem;
-    padding: 2rem 1rem;
+    gap: clamp(0.65rem, 1.7vw, 0.95rem);
+    width: min(100%, 30rem);
+    margin: 0 auto;
+    padding: clamp(1.15rem, 3vw, 1.7rem) 1rem 0;
     text-align: center;
 
     .gatsby-image-wrapper:first-of-type {
-      width: 6rem;
+      width: clamp(4.4rem, 17vw, 5.6rem);
     }
 
     .gatsby-image-wrapper:nth-of-type(2) {
-      width: min(100%, 12rem);
+      width: min(100%, 13.5rem);
+    }
+
+    .empty-character {
+      width: min(100%, 13.5rem);
+      margin-bottom: 0;
     }
 
     p {
       max-width: 22rem;
       color: var(--cart-ink);
       font-family: "Caveat Variable", cursive;
-      font-size: clamp(1.7rem, 6vw, 2.2rem);
+      font-size: clamp(1.55rem, 5.4vw, 2rem);
       line-height: 1.1;
+    }
+  }
+
+  .empty-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-height: 2.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 99rem;
+    background: linear-gradient(135deg, #ff5b94, var(--cart-pink));
+    color: #ffffff;
+    font-size: 0.92rem;
+    font-weight: 900;
+    line-height: 1;
+    box-shadow: 0 10px 22px rgba(207, 23, 97, 0.2);
+
+    svg {
+      width: 0.85rem;
+      height: 0.85rem;
     }
   }
 }
@@ -531,6 +570,10 @@
 @media (max-width: 720px) {
   #cart {
     padding: 0 0.65rem 5.25rem;
+
+    &.cart-empty-page {
+      padding-bottom: 0;
+    }
 
     .banner {
       width: calc(100% + 1.3rem);
@@ -588,5 +631,23 @@
       padding: 0.85rem 3rem 0.85rem 0.75rem;
       font-size: 0.8rem;
     }
+
+    .empty {
+      gap: 0.7rem;
+      padding-top: 1rem;
+      padding-bottom: 0;
+
+      .gatsby-image-wrapper:nth-of-type(2) {
+        width: min(100%, 11.5rem);
+      }
+
+      .empty-character {
+        width: min(100%, 11.5rem);
+      }
+    }
   }
+}
+
+#cart.cart-empty-page {
+  padding-bottom: 0;
 }

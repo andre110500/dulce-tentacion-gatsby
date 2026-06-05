@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { GlobalContext } from "../context/GlobalContext";
 
 import { useContext } from "react";
+import { Link } from "gatsby";
 
 import Swal from "sweetalert2";
 import { createWhatsAppLink, createMessage } from "../logic/whatsappLink";
@@ -12,7 +13,7 @@ import SummarySection from "../components/SummarySection";
 import DeliverySection from "../components/DeliverySection";
 import { BannerSection } from "../components/BannerSection";
 
-import { FaCopy } from "react-icons/fa";
+import { FaArrowRight, FaCopy } from "react-icons/fa";
 import { TbCopyCheckFilled } from "react-icons/tb";
 
 import { triggerAlert } from "../context/GlobalContext";
@@ -211,7 +212,7 @@ export default function Cart() {
 
   ///////////////////////////
   return (
-    <main id="cart">
+    <main id="cart" className={cartItems.length === 0 ? "cart-empty-page" : ""}>
       <div className="content">
         <BannerSection h2="Acá podés completar tu pedido" h1="Carrito">
           <StaticImage src="../images/cart-banner.jpg" />
@@ -320,14 +321,20 @@ export default function Cart() {
           <div className="empty">
             <StaticImage
               src="../images/sad-shopping-cart.png"
-              alt="Logo"
+              alt="Carrito vacio"
               placeholder="blurred"
-              class="sad-shopping-cart"
+              className="sad-shopping-cart"
             />
             <p>No hay nada acá, ¿por qué no agregás algo?</p>
+            <Link to="/catalogo" className="empty-cta">
+              Ver catálogo
+              <FaArrowRight aria-hidden="true" />
+            </Link>
             <StaticImage
               src="../images/anime-girl-thinking.png"
+              alt=""
               placeholder="blurred"
+              className="empty-character"
             />
           </div>
         )}
