@@ -27,7 +27,6 @@ function getStoreStatus() {
 export default function MobileShopNav({ currentPage }) {
   const { cartItems } = useContext(GlobalContext);
   const [isOpen, setIsOpen] = useState(false);
-  const [showHours, setShowHours] = useState(false);
   const cartCount = cartItems.reduce((total, item) => total + item.count, 0);
   const isCart = currentPage === "cart";
   const primaryTarget = isCart ? "/catalogo" : "/carrito";
@@ -41,6 +40,25 @@ export default function MobileShopNav({ currentPage }) {
 
     return () => clearInterval(intervalId);
   }, []);
+
+  function scrollToFooter() {
+    const workingHours = document.querySelector("footer .working-hours");
+    const footer = document.querySelector("footer");
+    const target = workingHours || footer;
+
+    target?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+
+    if (!workingHours) return;
+
+    window.setTimeout(() => {
+      workingHours.classList.remove("working-hours--highlight");
+      void workingHours.offsetWidth;
+      workingHours.classList.add("working-hours--highlight");
+    }, 450);
+  }
 
   return (
     <nav className="mobile-shop-nav" aria-label="Accesos rapidos de compra">
@@ -80,9 +98,7 @@ export default function MobileShopNav({ currentPage }) {
           isOpen ? "mobile-shop-nav__info--open" : "mobile-shop-nav__info--closed"
         }`}
         aria-label="Ver horarios de atencion"
-        aria-expanded={showHours}
-        aria-controls="mobile-shop-nav-hours"
-        onClick={() => setShowHours((currentValue) => !currentValue)}
+        onClick={scrollToFooter}
       >
         <FaStore aria-hidden="true" />
         <span>
@@ -90,14 +106,6 @@ export default function MobileShopNav({ currentPage }) {
           <span>{isOpen ? "Abierto ahora" : "Ver atencion"}</span>
         </span>
       </button>
-
-      {showHours && (
-        <div className="mobile-shop-nav__hours" id="mobile-shop-nav-hours">
-          <strong>Horarios</strong>
-          <span>Lun a vie: 20:30 a 24</span>
-          <span>Sab y dom: 13 a 24</span>
-        </div>
-      )}
     </nav>
   );
 }

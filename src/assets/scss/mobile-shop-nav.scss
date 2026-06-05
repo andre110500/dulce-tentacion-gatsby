@@ -98,45 +98,6 @@
     line-height: 1.05;
   }
 
-  .mobile-shop-nav__hours {
-    position: absolute;
-    right: 0.72rem;
-    bottom: calc(4.95rem + env(safe-area-inset-bottom));
-    display: grid;
-    gap: 0.16rem;
-    width: min(12.5rem, calc(100vw - 1.4rem));
-    padding: 0.72rem 0.82rem;
-    border: 1px solid rgba(207, 23, 97, 0.16);
-    border-radius: 0.65rem;
-    background: #ffffff;
-    color: #2d2027;
-    box-shadow: 0 14px 32px rgba(111, 38, 64, 0.2);
-  }
-
-  .mobile-shop-nav__hours::after {
-    content: "";
-    position: absolute;
-    right: 2.15rem;
-    bottom: -0.42rem;
-    width: 0.84rem;
-    height: 0.84rem;
-    background: #ffffff;
-    transform: rotate(45deg);
-  }
-
-  .mobile-shop-nav__hours strong {
-    color: #cf1761;
-    font-size: 0.78rem;
-    font-weight: 900;
-    line-height: 1.1;
-  }
-
-  .mobile-shop-nav__hours span {
-    font-size: 0.72rem;
-    font-weight: 700;
-    line-height: 1.2;
-  }
-
   .mobile-shop-nav__info--closed {
     opacity: 0.84;
   }
