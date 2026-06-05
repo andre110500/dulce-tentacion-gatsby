@@ -25,8 +25,12 @@
   }
 
   .mobile-shop-nav__info {
+    appearance: none;
+    padding: 0;
     border: 0;
+    border-radius: 0;
     background: transparent;
+    box-shadow: none;
     font-family: inherit;
     display: grid;
     grid-template-columns: auto minmax(0, max-content);
@@ -45,6 +49,7 @@
   .mobile-shop-nav__info--delivery {
     justify-self: start;
     padding-right: 0.42rem;
+    cursor: pointer;
   }
 
   .mobile-shop-nav__info svg {
@@ -74,14 +79,9 @@
   }
 
   .mobile-shop-nav__info--status {
-    appearance: none;
     justify-self: center;
     width: 100%;
     padding-left: 0.48rem;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
     cursor: pointer;
   }
 

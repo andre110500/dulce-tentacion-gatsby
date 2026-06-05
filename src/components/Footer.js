@@ -38,7 +38,12 @@ export default function Footer() {
             <FaWhatsapp aria-hidden="true" />
             <span>WhatsApp</span>
           </a>
-          <a target="_blank" rel="noopener noreferrer" href={MAPS_URL}>
+          <a
+            className="footer-map-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            href={MAPS_URL}
+          >
             <FaMapMarkedAlt aria-hidden="true" />
             <span>Google Maps</span>
           </a>

@@ -9,8 +9,6 @@ import {
   FaStore,
 } from "react-icons/fa";
 
-const MAPS_URL =
-  "https://www.google.com/maps/search/?api=1&query=El%20Malambo%201733%2C%20Marcos%20Paz";
 const TIME_ZONE = "America/Argentina/Buenos_Aires";
 
 function getStoreStatus() {
@@ -41,32 +39,45 @@ export default function MobileShopNav({ currentPage }) {
     return () => clearInterval(intervalId);
   }, []);
 
-  function scrollToFooter() {
-    const workingHours = document.querySelector("footer .working-hours");
+  function scrollToFooterSection(targetSelector, highlightSelectors) {
+    const targetSection = document.querySelector(targetSelector);
     const footer = document.querySelector("footer");
-    const target = workingHours || footer;
+    const target = targetSection || footer;
 
     target?.scrollIntoView({
       behavior: "smooth",
       block: "center",
     });
 
-    if (!workingHours) return;
+    const highlightedElements = highlightSelectors
+      .map((selector) => document.querySelector(selector))
+      .filter(Boolean);
+
+    if (highlightedElements.length === 0) return;
 
     window.setTimeout(() => {
-      workingHours.classList.remove("working-hours--highlight");
-      void workingHours.offsetWidth;
-      workingHours.classList.add("working-hours--highlight");
+      highlightedElements.forEach((element) => {
+        element.classList.remove("footer-highlight");
+      });
+      void highlightedElements[0].offsetWidth;
+      highlightedElements.forEach((element) => {
+        element.classList.add("footer-highlight");
+      });
     }, 450);
   }
 
   return (
     <nav className="mobile-shop-nav" aria-label="Accesos rapidos de compra">
-      <a
-        href={MAPS_URL}
+      <button
+        type="button"
         className="mobile-shop-nav__info mobile-shop-nav__info--delivery"
-        target="_blank"
-        rel="noopener noreferrer"
+        aria-label="Ver zonas de entrega y ubicacion"
+        onClick={() =>
+          scrollToFooterSection("footer .location", [
+            "footer .location",
+            "footer .footer-map-link",
+          ])
+        }
       >
         <FaMapMarkerAlt aria-hidden="true" />
         <span>
@@ -74,7 +85,7 @@ export default function MobileShopNav({ currentPage }) {
           <span>Marcos Paz</span>
           <small>y Santa Isabel</small>
         </span>
-      </a>
+      </button>
 
       <Link
         to={primaryTarget}
@@ -98,7 +109,9 @@ export default function MobileShopNav({ currentPage }) {
           isOpen ? "mobile-shop-nav__info--open" : "mobile-shop-nav__info--closed"
         }`}
         aria-label="Ver horarios de atencion"
-        onClick={scrollToFooter}
+        onClick={() =>
+          scrollToFooterSection("footer .working-hours", ["footer .working-hours"])
+        }
       >
         <FaStore aria-hidden="true" />
         <span>
