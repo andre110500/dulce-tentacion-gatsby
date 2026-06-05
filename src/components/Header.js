@@ -6,12 +6,11 @@ import { useContext, useRef, useEffect, useState } from "react";
 import cartIcon from "../images/cart.svg";
 import { StaticImage } from "gatsby-plugin-image";
 
-import Hamburger from "hamburger-react";
-
 const tabsObj = ["Catalogo", "Kiosko", "Nosotros", "Galeria", "Testimonios"];
 
 export default function Header() {
   const headerRef = useRef(null);
+  const [isOpen, setOpen] = useState(false);
 
   useEffect(() => {
     const updateHeaderHeight = () => {
@@ -24,18 +23,14 @@ export default function Header() {
       }
     };
 
-    //Update on mount and window resize
-
     updateHeaderHeight();
     window.addEventListener("resize", updateHeaderHeight);
-    //Cleanup the event listener
 
     return () => {
       window.removeEventListener("resize", updateHeaderHeight);
     };
   }, []);
 
-  const [isOpen, setOpen] = useState(false);
   return (
     <header ref={headerRef}>
       <div className="content">
@@ -54,10 +49,8 @@ export default function Header() {
           <input
             type="checkbox"
             id="checkbox"
-            onChange={(e) => {
-              console.log("change");
-              setOpen(e.target.checked);
-            }}
+            checked={isOpen}
+            onChange={(e) => setOpen(e.target.checked)}
           />
           <label htmlFor="checkbox" className="overlay"></label>
           <Sidebar />
@@ -66,9 +59,13 @@ export default function Header() {
           <label
             className="hamburger-menu"
             htmlFor="checkbox"
-            aria-label="Abrir menú"
+            aria-label={isOpen ? "Cerrar menu" : "Abrir menu"}
           >
-            <Hamburger toggled={isOpen} size={24} toggle={setOpen} />
+            <span className={`hamburger-icon ${isOpen ? "is-open" : ""}`}>
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
           </label>
         </div>
       </div>
