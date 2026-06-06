@@ -286,6 +286,17 @@
     justify-content: center;
   }
 
+  .catalog-section--short-simple {
+    grid-column: 1 / -1;
+    width: min(100%, calc((12.8rem * 4) + (1.35rem * 3)));
+    justify-self: center;
+
+    .product-cards {
+      grid-template-columns: repeat(auto-fit, minmax(10.6rem, 12.8rem));
+      justify-content: center;
+    }
+  }
+
   .catalog-subsections {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

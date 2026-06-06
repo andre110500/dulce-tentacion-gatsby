@@ -341,12 +341,13 @@ function CatalogSection({ section, isCompact, setActiveCategory }) {
       : section.items
     : [];
   const hasHiddenItems = section.items && section.items.length > items.length;
+  const isShortSimpleSection = !section.groups && section.items?.length <= 4;
 
   return (
     <section
       className={`catalog-section ${isCompact ? "catalog-section--compact" : ""} ${
         section.groups ? "catalog-section--grouped" : ""
-      }`}
+      } ${isShortSimpleSection ? "catalog-section--short-simple" : ""}`}
       id={section.id}
     >
       <div className="catalog-section__header">
