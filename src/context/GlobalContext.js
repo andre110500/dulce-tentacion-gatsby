@@ -15,7 +15,6 @@ export function triggerAlert(message) {
     </div>
   );
   toast.success(<MultiLineToast />, {
-    position: "top-left",
     autoClose: 2500,
     hideProgressBar: false,
     closeButton: false,

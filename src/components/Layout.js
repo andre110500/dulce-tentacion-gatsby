@@ -21,7 +21,7 @@ export default function Layout({ children }) {
       <SEO />
       <Header />
       {children}
-      <ToastContainer />
+      <ToastContainer position="top-right" />
       <Footer />
       {/* <OpenCloseSign /> */}
     </>
