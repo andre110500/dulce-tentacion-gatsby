@@ -23,45 +23,27 @@ import { GiIcePop, GiIceCreamCone } from "react-icons/gi";
 import { PiPopsicleFill } from "react-icons/pi";
 import MobileShopNav from "../components/MobileShopNav";
 
-const catalogSections = [
+const iceCreamSubTypes = [
   {
-    id: "helados",
-    label: "Helados",
-    title: "Helado Artesanal",
+    id: "tub",
+    label: "Potes",
     icon: FaIceCream,
     matcher: (product) =>
       /(kg|1\/2|1\/4|kilo|cuarto|medio|helado artesanal)/i.test(
         `${product.name} ${product.description || ""}`
       ),
-    limit: 3,
   },
   {
-    id: "postres",
-    label: "Postres",
-    title: "Postres Helados",
-    icon: FaBirthdayCake,
-    matcher: (product) => /(torta|postre|alfajor)/i.test(product.name),
-    limit: 4,
-  },
-  {
-    id: "palitos",
-    label: "Palitos",
-    title: "Palitos Helados",
-    icon: GiIcePop,
-    matcher: (product) =>
-      /(palito|pico|bombon|crema duo|twister|osito|alfamio|bombon)/i.test(
-        product.name
-      ),
-    limit: 6,
-  },
-  {
-    id: "conos",
-    label: "Conos",
-    title: "Conos",
+    id: "wafer-cone",
+    label: "Cucuruchos",
     icon: GiIceCreamCone,
-    matcher: (product) => /(cono|cucurucho|oblea)/i.test(product.name),
-    limit: 6,
+    matcher: (product) =>
+      getProductType(product) === "add-on" &&
+      getProductSubType(product) === "wafer-cone",
   },
+  { id: "dessert", label: "Postres", icon: FaBirthdayCake },
+  { id: "popsicle", label: "Palitos", icon: GiIcePop },
+  { id: "cone", label: "Conos", icon: GiIceCreamCone },
 ];
 
 const drinkSubTypes = [
@@ -75,6 +57,11 @@ const drinkSubTypes = [
 
 const getProductType = (product) => product.type || product.productType;
 const getProductSubType = (product) => product.subType || product.subtype;
+const isFormOnlyAddOn = (product) =>
+  getProductType(product) === "add-on" &&
+  (getProductSubType(product) === "pot-topping" ||
+    /salsa/i.test(product.name) ||
+    /rockl(?:et|e)t?s/i.test(product.name));
 
 function getSectionItemCount(section) {
   if (section.groups) {
@@ -106,10 +93,7 @@ function getVisibleProducts(products) {
   return products
     .map(({ node }) => node)
     .filter((product) => {
-      const isExcludedName =
-        /salsa/i.test(product.name) || /rocklets/i.test(product.name);
-
-      return !product.outOfStock && !isExcludedName;
+      return !product.outOfStock && !isFormOnlyAddOn(product);
     })
     .sort((a, b) => b.price - a.price);
 }
@@ -117,20 +101,36 @@ function getVisibleProducts(products) {
 function buildSections(products) {
   const usedProductIds = new Set();
 
-  const sections = catalogSections.map((section) => {
-    const items = products
-      .filter((product) => section.matcher(product))
-      .filter((product) => {
+  const sections = [];
+  const iceCreamGroups = iceCreamSubTypes
+    .map((subType) => ({
+      ...subType,
+      items: products.filter((product) => {
         if (usedProductIds.has(product._id)) return false;
-        usedProductIds.add(product._id);
-        return true;
-      });
 
-    return {
-      ...section,
-      items,
-    };
-  });
+        const productSubType = getProductSubType(product);
+        const belongsToGroup = subType.matcher
+          ? productSubType === subType.id || subType.matcher(product)
+          : productSubType === subType.id;
+
+        if (belongsToGroup) {
+          usedProductIds.add(product._id);
+        }
+
+        return belongsToGroup;
+      }),
+    }))
+    .filter((group) => group.items.length > 0);
+
+  if (iceCreamGroups.length > 0) {
+    sections.push({
+      id: "helados",
+      label: "Helados",
+      title: "Helados",
+      icon: FaIceCream,
+      groups: iceCreamGroups,
+    });
+  }
 
   const drinkProducts = products.filter(
     (product) =>
@@ -169,6 +169,27 @@ function buildSections(products) {
       title: "Bebidas",
       icon: FaWineBottle,
       groups,
+    });
+  }
+
+  const addOnProducts = products.filter(
+    (product) =>
+      getProductType(product) === "add-on" &&
+      getProductSubType(product) !== "wafer-cone" &&
+      !isFormOnlyAddOn(product) &&
+      !usedProductIds.has(product._id)
+  );
+
+  if (addOnProducts.length > 0) {
+    addOnProducts.forEach((product) => usedProductIds.add(product._id));
+
+    sections.push({
+      id: "extras",
+      label: "Extras",
+      title: "Extras para tu pedido",
+      icon: GiIceCreamCone,
+      items: addOnProducts,
+      limit: 8,
     });
   }
 
