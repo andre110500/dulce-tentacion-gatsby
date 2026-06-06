@@ -30,6 +30,9 @@
     padding: clamp(2rem, 4vw, 3.5rem) clamp(1.5rem, 6vw, 6rem);
     overflow: hidden;
     touch-action: pan-y;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
     background:
       linear-gradient(90deg, rgba(255, 240, 247, 0.96), rgba(255, 247, 251, 0.82)),
       radial-gradient(circle at 78% 38%, #ffd5e4 0 0.15rem, transparent 0.18rem),
@@ -63,10 +66,15 @@
       line-height: 1.1;
       transform: rotate(-7deg);
     }
+
+    &:active {
+      cursor: grabbing;
+    }
   }
 
   .catalog-hero__copy {
     justify-self: end;
+    pointer-events: none;
 
     h1 {
       color: var(--catalog-pink-dark);
@@ -96,10 +104,11 @@
     display: flex;
     gap: 0.45rem;
     margin-top: 1.7rem;
+    pointer-events: auto;
 
     button {
-      width: 1rem;
-      height: 0.55rem;
+      width: 1.35rem;
+      height: 0.78rem;
       padding: 0;
       border: 2px solid #ffb6cf;
       border-radius: 99rem;
@@ -112,7 +121,7 @@
         border-color 0.2s ease;
 
       &.active {
-        width: 1.8rem;
+        width: 2.25rem;
         background: var(--catalog-pink);
         border-color: var(--catalog-pink);
       }
@@ -148,6 +157,7 @@
     border: 0.2rem solid rgba(236, 63, 120, 0.85);
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.42);
+    pointer-events: none;
   }
 
   .catalog-hero__image {
@@ -157,6 +167,7 @@
     border-radius: 0.6rem;
     overflow: hidden;
     box-shadow: 0 22px 35px rgba(193, 66, 112, 0.18);
+    pointer-events: none;
 
     .gatsby-image-wrapper,
     img {

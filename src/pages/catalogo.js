@@ -63,8 +63,8 @@ const catalogHeroSlides = [
   },
   {
     id: "promo-placeholder",
-    title: "Promo",
-    lines: ["Placeholder para", "una promo"],
+    title: "Envios",
+    lines: ["Gratis en rayito", "hornero y santa"],
     visualLabel: "Imagen pendiente",
   },
   {
@@ -300,7 +300,7 @@ export default function Shop(props) {
 
 function CatalogHero() {
   const [activeSlide, setActiveSlide] = useState(0);
-  const swipeStartX = useRef(null);
+  const swipeStart = useRef(null);
   const slide = catalogHeroSlides[activeSlide];
 
   function goToSlide(index) {
@@ -326,22 +326,44 @@ function CatalogHero() {
   }, [activeSlide]);
 
   function handlePointerDown(event) {
-    swipeStartX.current = event.clientX;
+    if (event.target.closest("button")) return;
+
+    event.preventDefault();
+    swipeStart.current = {
+      x: event.clientX,
+      y: event.clientY,
+      pointerId: event.pointerId,
+    };
+    event.currentTarget.setPointerCapture?.(event.pointerId);
   }
 
-  function handlePointerUp(event) {
-    if (swipeStartX.current === null) return;
+  function handlePointerMove(event) {
+    if (!swipeStart.current) return;
 
-    const swipeDistance = event.clientX - swipeStartX.current;
-    swipeStartX.current = null;
+    const swipeDistanceX = event.clientX - swipeStart.current.x;
+    const swipeDistanceY = event.clientY - swipeStart.current.y;
+    const isHorizontalSwipe =
+      Math.abs(swipeDistanceX) > 46 &&
+      Math.abs(swipeDistanceX) > Math.abs(swipeDistanceY) * 1.25;
 
-    if (Math.abs(swipeDistance) < 44) return;
+    if (!isHorizontalSwipe) return;
 
-    if (swipeDistance < 0) {
+    event.preventDefault();
+    if (swipeDistanceX < 0) {
       goToNextSlide();
     } else {
       goToPreviousSlide();
     }
+
+    event.currentTarget.releasePointerCapture?.(swipeStart.current.pointerId);
+    swipeStart.current = null;
+  }
+
+  function handlePointerEnd(event) {
+    if (!swipeStart.current) return;
+
+    event.currentTarget.releasePointerCapture?.(swipeStart.current.pointerId);
+    swipeStart.current = null;
   }
 
   return (
@@ -350,7 +372,9 @@ function CatalogHero() {
       aria-labelledby="catalog-title"
       aria-live="polite"
       onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerEnd}
+      onPointerCancel={handlePointerEnd}
     >
       <div className="catalog-hero__copy">
         <h1 id="catalog-title">{slide.title}</h1>
