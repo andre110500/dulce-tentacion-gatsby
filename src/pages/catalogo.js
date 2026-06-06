@@ -11,12 +11,10 @@ import {
   FaIceCream,
   FaMinus,
   FaPlus,
-  FaRegClock,
   FaSearchPlus,
   FaSmoking,
   FaThLarge,
   FaTimes,
-  FaTruck,
   FaWineBottle,
 } from "react-icons/fa";
 import { GiIcePop, GiIceCreamCone } from "react-icons/gi";
@@ -272,8 +270,6 @@ export default function Shop(props) {
             />
           ))}
         </div>
-
-        <CatalogInfo />
       </div>
       <MobileShopNav currentPage="catalog" />
     </main>
@@ -624,34 +620,6 @@ function Button({ apiRoute, buttonRef, handleClick }) {
     >
       <span>+ {apiRoute ? "Elegir" : "Agregar"}</span>
     </button>
-  );
-}
-
-function CatalogInfo() {
-  return (
-    <section className="catalog-info" aria-label="Información del local">
-      <div>
-        <FaTruck aria-hidden="true" />
-        <p>
-          <strong>Entrega en Marcos Paz</strong>
-          <span>y zonas aledanas</span>
-        </p>
-      </div>
-      <div>
-        <FaRegClock aria-hidden="true" />
-        <p>
-          <span>Lunes a Viernes 20:30 a 24:00</span>
-          <span>Sábados y Domingos 13:00 a 24:00</span>
-        </p>
-      </div>
-      <div>
-        <FaHeart aria-hidden="true" />
-        <p>
-          <strong>Hecho con amor</strong>
-          <span>para endulzar tus momentos</span>
-        </p>
-      </div>
-    </section>
   );
 }
 
