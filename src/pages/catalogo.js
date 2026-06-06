@@ -5,6 +5,7 @@ import { graphql, navigate } from "gatsby";
 import { GatsbyImage, getImage, StaticImage } from "gatsby-plugin-image";
 import {
   FaBirthdayCake,
+  FaBeer,
   FaChevronRight,
   FaHeart,
   FaIceCream,
@@ -12,9 +13,11 @@ import {
   FaPlus,
   FaRegClock,
   FaSearchPlus,
+  FaSmoking,
   FaThLarge,
   FaTimes,
   FaTruck,
+  FaWineBottle,
 } from "react-icons/fa";
 import { GiIcePop, GiIceCreamCone } from "react-icons/gi";
 import { PiPopsicleFill } from "react-icons/pi";
@@ -61,6 +64,26 @@ const catalogSections = [
   },
 ];
 
+const drinkSubTypes = [
+  { id: "can", label: "Latas", icon: FaBeer },
+  { id: "small-bottle", label: "Petacas", icon: FaWineBottle },
+  { id: "wine", label: "Vinos", icon: FaWineBottle },
+  { id: "fernet", label: "Fernet", icon: FaWineBottle },
+  { id: "liqueur", label: "Licores", icon: FaWineBottle },
+  { id: "soft-drink", label: "Gaseosas", icon: FaBeer },
+];
+
+const getProductType = (product) => product.type || product.productType;
+const getProductSubType = (product) => product.subType || product.subtype;
+
+function getSectionItemCount(section) {
+  if (section.groups) {
+    return section.groups.reduce((total, group) => total + group.items.length, 0);
+  }
+
+  return section.items.length;
+}
+
 const formatPrice = (price) =>
   new Intl.NumberFormat("es-AR", {
     maximumFractionDigits: 0,
@@ -70,7 +93,14 @@ const cleanProductName = (name) =>
   name
     .replace(/-/g, " ")
     .replace(/\s+/g, " ")
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+    .trim()
+    .split(" ")
+    .map((word) =>
+      word.length > 1
+        ? `${word.charAt(0).toUpperCase()}${word.slice(1).toLowerCase()}`
+        : word.toUpperCase()
+    )
+    .join(" ");
 
 function getVisibleProducts(products) {
   return products
@@ -102,6 +132,64 @@ function buildSections(products) {
     };
   });
 
+  const drinkProducts = products.filter(
+    (product) =>
+      getProductType(product) === "drink" && !usedProductIds.has(product._id)
+  );
+
+  if (drinkProducts.length > 0) {
+    const knownSubTypes = new Set(drinkSubTypes.map(({ id }) => id));
+    const groups = drinkSubTypes
+      .map((subType) => ({
+        ...subType,
+        items: drinkProducts.filter(
+          (product) => getProductSubType(product) === subType.id
+        ),
+      }))
+      .filter((group) => group.items.length > 0);
+
+    const otherDrinkItems = drinkProducts.filter(
+      (product) => !knownSubTypes.has(getProductSubType(product))
+    );
+
+    if (otherDrinkItems.length > 0) {
+      groups.push({
+        id: "other-drinks",
+        label: "Otras bebidas",
+        icon: FaBeer,
+        items: otherDrinkItems,
+      });
+    }
+
+    drinkProducts.forEach((product) => usedProductIds.add(product._id));
+
+    sections.push({
+      id: "bebidas",
+      label: "Bebidas",
+      title: "Bebidas",
+      icon: FaWineBottle,
+      groups,
+    });
+  }
+
+  const cigaretteProducts = products.filter(
+    (product) =>
+      getProductType(product) === "cigarette" && !usedProductIds.has(product._id)
+  );
+
+  if (cigaretteProducts.length > 0) {
+    cigaretteProducts.forEach((product) => usedProductIds.add(product._id));
+
+    sections.push({
+      id: "cigarrillos",
+      label: "Cigarrillos",
+      title: "Cigarrillos",
+      icon: FaSmoking,
+      items: cigaretteProducts,
+      limit: 8,
+    });
+  }
+
   const uncategorized = products.filter(
     (product) => !usedProductIds.has(product._id)
   );
@@ -124,7 +212,9 @@ function buildSections(products) {
 export default function Shop(props) {
   const [activeCategory, setActiveCategory] = useState("todos");
   const products = getVisibleProducts(props.data.allProduct.edges);
-  const sections = buildSections(products).filter((section) => section.items.length > 0);
+  const sections = buildSections(products).filter(
+    (section) => getSectionItemCount(section) > 0
+  );
   const displayedSections =
     activeCategory === "todos"
       ? sections
@@ -224,11 +314,18 @@ function CategoryTabs({ sections, activeCategory, setActiveCategory }) {
 
 function CatalogSection({ section, isCompact, setActiveCategory }) {
   const Icon = section.icon;
-  const items = isCompact ? section.items.slice(0, section.limit) : section.items;
+  const items = section.items
+    ? isCompact
+      ? section.items.slice(0, section.limit)
+      : section.items
+    : [];
+  const hasHiddenItems = section.items && section.items.length > items.length;
 
   return (
     <section
-      className={`catalog-section ${isCompact ? "catalog-section--compact" : ""}`}
+      className={`catalog-section ${isCompact ? "catalog-section--compact" : ""} ${
+        section.groups ? "catalog-section--grouped" : ""
+      }`}
       id={section.id}
     >
       <div className="catalog-section__header">
@@ -238,7 +335,7 @@ function CatalogSection({ section, isCompact, setActiveCategory }) {
           </span>
           <h2>{section.title}</h2>
         </div>
-        {section.items.length > items.length && (
+        {hasHiddenItems && (
           <button
             className="view-all"
             type="button"
@@ -249,11 +346,35 @@ function CatalogSection({ section, isCompact, setActiveCategory }) {
         )}
       </div>
 
-      <div className="product-cards">
-        {items.map((product) => (
-          <Card key={product._id} product={product} />
-        ))}
-      </div>
+      {section.groups ? (
+        <div className="catalog-subsections">
+          {section.groups.map((group) => {
+            const GroupIcon = group.icon;
+
+            return (
+              <div className="catalog-subsection" key={group.id}>
+                <div className="catalog-subsection__header">
+                  <span>
+                    <GroupIcon aria-hidden="true" />
+                  </span>
+                  <h3>{group.label}</h3>
+                </div>
+                <div className="product-cards">
+                  {group.items.map((product) => (
+                    <Card key={product._id} product={product} />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="product-cards">
+          {items.map((product) => (
+            <Card key={product._id} product={product} />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
@@ -320,13 +441,26 @@ function Card({ product }) {
 }
 
 function ProductImage({ product, image }) {
-  const resolvedImage = image || getImage(product.localImage);
+  const hasProductImage = product.hasProductImage !== false;
+  const resolvedImage = hasProductImage ? image || getImage(product.localImage) : null;
 
   if (resolvedImage) {
     return <GatsbyImage image={resolvedImage} alt={product.name} />;
   }
 
-  return <img src={product.imgUrl} alt={product.name} loading="lazy" />;
+  if (hasProductImage && product.imgUrl) {
+    return <img src={product.imgUrl} alt={product.name} loading="lazy" />;
+  }
+
+  return (
+    <span className="product-placeholder" aria-hidden="true">
+      {cleanProductName(product.name)
+        .split(" ")
+        .map((word) => word[0])
+        .join("")
+        .slice(0, 3)}
+    </span>
+  );
 }
 
 function ProductDetailModal({ product, image, dispatch, onClose }) {
@@ -512,6 +646,9 @@ export const query = graphql`
           description
           name
           imgUrl
+          hasProductImage
+          type
+          subType
           apiRoute
           _id
           flavours

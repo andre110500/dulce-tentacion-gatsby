@@ -3,6 +3,8 @@ require("dotenv").config();
 
 exports.sourceNodes = async ({ actions }) => {
   const { createNode } = actions;
+  const fallbackProductImage =
+    "https://res.cloudinary.com/dto1ctatc/image/upload/v1739735861/dulce-tentacion/meta-image_wd4l7m.png";
 
   const fetchProducts = async () => {
     const apiUrl = process.env.GATSBY_API_URL;
@@ -58,6 +60,7 @@ exports.sourceNodes = async ({ actions }) => {
 
     // Map products to Gatsby nodes
     products.forEach((product) => {
+      const hasProductImage = Boolean(product.imgUrl);
       const productNode = {
         id: `${product._id}`,
         parent: `__SOURCE__`,
@@ -69,8 +72,11 @@ exports.sourceNodes = async ({ actions }) => {
         description: product.description,
         price: product.price,
         _id: product._id,
-        imgUrl: product.imgUrl,
+        imgUrl: hasProductImage ? product.imgUrl : fallbackProductImage,
+        hasProductImage,
         outOfStock: product.outOfStock,
+        type: product.type,
+        subType: product.subType,
         flavours: product.flavours,
         apiRoute: product.apiRoute,
       };
