@@ -428,11 +428,13 @@
       radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.85), transparent 0.9rem),
       linear-gradient(135deg, #ffd166, #ef476f 48%, #118ab2);
     color: #ffffff;
-    font-size: 1rem;
-    font-weight: 900;
-    line-height: 1;
-    text-transform: uppercase;
     box-shadow: 0 10px 20px rgba(111, 38, 64, 0.16);
+
+    svg {
+      width: 2.15rem;
+      height: 2.15rem;
+      filter: drop-shadow(0 4px 8px rgba(82, 22, 52, 0.18));
+    }
   }
 
   .description {

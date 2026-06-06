@@ -6,7 +6,7 @@ import { useContext, useRef, useEffect, useState } from "react";
 import cartIcon from "../images/cart.svg";
 import { StaticImage } from "gatsby-plugin-image";
 
-const tabsObj = ["Catalogo", "Kiosko", "Nosotros", "Galeria", "Testimonios"];
+const tabsObj = ["Catalogo", "Nosotros", "Galeria", "Testimonios"];
 
 export default function Header() {
   const headerRef = useRef(null);

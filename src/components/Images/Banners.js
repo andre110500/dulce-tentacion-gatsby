@@ -31,16 +31,6 @@ export function ReviewsBanner() {
   );
 }
 
-export function KioskoBanner() {
-  return (
-    <StaticImage
-      src="../../images/kiosko-banner.jpg"
-      alt="anime styled kiosko with a girl  "
-      placeholder="blurred"
-    />
-  );
-}
-
 export function GalleryBanner() {
   return (
     <StaticImage

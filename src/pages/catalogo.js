@@ -52,7 +52,7 @@ const drinkSubTypes = [
   { id: "wine", label: "Vinos", icon: FaWineBottle },
   { id: "fernet", label: "Fernet", icon: FaWineBottle },
   { id: "liqueur", label: "Licores", icon: FaWineBottle },
-  { id: "soft-drink", label: "Gaseosas", icon: FaBeer },
+  { id: "soft-drink", label: "Sin alcohol", icon: FaBeer },
 ];
 
 const getProductType = (product) => product.type || product.productType;
@@ -62,6 +62,16 @@ const isFormOnlyAddOn = (product) =>
   (getProductSubType(product) === "pot-topping" ||
     /salsa/i.test(product.name) ||
     /rockl(?:et|e)t?s/i.test(product.name));
+
+function getProductPlaceholderIcon(product) {
+  const productType = getProductType(product);
+
+  if (productType === "drink") return FaWineBottle;
+  if (productType === "cigarette") return FaSmoking;
+  if (getProductSubType(product) === "wafer-cone") return GiIceCreamCone;
+
+  return FaIceCream;
+}
 
 function getSectionItemCount(section) {
   if (section.groups) {
@@ -465,6 +475,7 @@ function Card({ product }) {
 function ProductImage({ product, image }) {
   const hasProductImage = product.hasProductImage !== false;
   const resolvedImage = hasProductImage ? image || getImage(product.localImage) : null;
+  const PlaceholderIcon = getProductPlaceholderIcon(product);
 
   if (resolvedImage) {
     return <GatsbyImage image={resolvedImage} alt={product.name} />;
@@ -476,11 +487,7 @@ function ProductImage({ product, image }) {
 
   return (
     <span className="product-placeholder" aria-hidden="true">
-      {cleanProductName(product.name)
-        .split(" ")
-        .map((word) => word[0])
-        .join("")
-        .slice(0, 3)}
+      <PlaceholderIcon />
     </span>
   );
 }
