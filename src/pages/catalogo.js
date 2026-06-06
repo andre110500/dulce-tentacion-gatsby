@@ -53,6 +53,28 @@ const drinkSubTypes = [
   { id: "soft-drink", label: "Sin alcohol", icon: FaBeer },
 ];
 
+const catalogHeroSlides = [
+  {
+    id: "catalog",
+    title: "Catalogo",
+    lines: ["Elegi tus productos", "favoritos"],
+    visualLabel: "Mostrador de heladeria",
+    hasImage: true,
+  },
+  {
+    id: "promo-placeholder",
+    title: "Promo",
+    lines: ["Placeholder para", "una promo"],
+    visualLabel: "Imagen pendiente",
+  },
+  {
+    id: "season-placeholder",
+    title: "Nuevo",
+    lines: ["Placeholder para", "novedades"],
+    visualLabel: "Contenido pendiente",
+  },
+];
+
 const getProductType = (product) => product.type || product.productType;
 const getProductSubType = (product) => product.subType || product.subtype;
 const isFormOnlyAddOn = (product) =>
@@ -277,19 +299,77 @@ export default function Shop(props) {
 }
 
 function CatalogHero() {
+  const [activeSlide, setActiveSlide] = useState(0);
+  const swipeStartX = useRef(null);
+  const slide = catalogHeroSlides[activeSlide];
+
+  function goToSlide(index) {
+    setActiveSlide(index);
+  }
+
+  function goToNextSlide() {
+    setActiveSlide((currentSlide) =>
+      currentSlide === catalogHeroSlides.length - 1 ? 0 : currentSlide + 1
+    );
+  }
+
+  function goToPreviousSlide() {
+    setActiveSlide((currentSlide) =>
+      currentSlide === 0 ? catalogHeroSlides.length - 1 : currentSlide - 1
+    );
+  }
+
+  useEffect(() => {
+    const intervalId = setInterval(goToNextSlide, 5200);
+
+    return () => clearInterval(intervalId);
+  }, [activeSlide]);
+
+  function handlePointerDown(event) {
+    swipeStartX.current = event.clientX;
+  }
+
+  function handlePointerUp(event) {
+    if (swipeStartX.current === null) return;
+
+    const swipeDistance = event.clientX - swipeStartX.current;
+    swipeStartX.current = null;
+
+    if (Math.abs(swipeDistance) < 44) return;
+
+    if (swipeDistance < 0) {
+      goToNextSlide();
+    } else {
+      goToPreviousSlide();
+    }
+  }
+
   return (
-    <section className="catalog-hero" aria-labelledby="catalog-title">
+    <section
+      className="catalog-hero"
+      aria-labelledby="catalog-title"
+      aria-live="polite"
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+    >
       <div className="catalog-hero__copy">
-        <h1 id="catalog-title">Catálogo</h1>
+        <h1 id="catalog-title">{slide.title}</h1>
         <p>
-          Elegí tus productos
+          {slide.lines[0]}
           <br />
-          favoritos <FaHeart aria-hidden="true" />
+          {slide.lines[1]} <FaHeart aria-hidden="true" />
         </p>
-        <div className="catalog-hero__dots" aria-hidden="true">
-          <span className="active" />
-          <span />
-          <span />
+        <div className="catalog-hero__dots" aria-label="Slides del catalogo">
+          {catalogHeroSlides.map((heroSlide, index) => (
+            <button
+              key={heroSlide.id}
+              type="button"
+              className={index === activeSlide ? "active" : ""}
+              aria-label={`Ver slide ${index + 1}`}
+              aria-current={index === activeSlide}
+              onClick={() => goToSlide(index)}
+            />
+          ))}
         </div>
       </div>
 
@@ -304,13 +384,19 @@ function CatalogHero() {
       </div>
 
       <div className="catalog-hero__image">
-        <StaticImage
-          src="../images/catalog-banner.jpg"
-          alt="Mostrador de heladería Dulce Tentación"
-          placeholder="blurred"
-          layout="constrained"
-          width={520}
-        />
+        {slide.hasImage ? (
+          <StaticImage
+            src="../images/catalog-banner.jpg"
+            alt="Mostrador de heladeria Dulce Tentacion"
+            placeholder="blurred"
+            layout="constrained"
+            width={520}
+          />
+        ) : (
+          <div className="catalog-hero__placeholder" aria-label={slide.visualLabel}>
+            <span>{slide.visualLabel}</span>
+          </div>
+        )}
       </div>
     </section>
   );
