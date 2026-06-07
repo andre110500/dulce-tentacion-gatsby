@@ -17,6 +17,8 @@
     padding: 0.45rem 0.7rem;
     background: linear-gradient(135deg, #f54a84, #df2f70);
     box-shadow: 0 -10px 28px rgba(111, 38, 64, 0.22);
+    transform: translateY(var(--mobile-shop-nav-y-offset, 0));
+    will-change: transform;
   }
 
   .mobile-shop-nav__info,
@@ -185,7 +187,7 @@
   .Toastify__toast-container--top-right {
     top: auto;
     right: 0.75rem;
-    bottom: 5.35rem;
+    bottom: calc(5.35rem + var(--mobile-shop-nav-bottom-offset, 0px));
     left: 0.75rem;
     width: auto;
     padding: 0;

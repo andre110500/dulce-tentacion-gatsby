@@ -25,6 +25,8 @@ function getStoreStatus() {
 export default function MobileShopNav({ currentPage }) {
   const { cartItems } = useContext(GlobalContext);
   const [isOpen, setIsOpen] = useState(false);
+  const [viewportOffset, setViewportOffset] = useState(0);
+  const viewportLock = React.useRef({ height: null, width: null });
   const cartCount = cartItems.reduce((total, item) => total + item.count, 0);
   const isCart = currentPage === "cart";
   const primaryTarget = isCart ? "/catalogo" : "/carrito";
@@ -37,6 +39,46 @@ export default function MobileShopNav({ currentPage }) {
     const intervalId = setInterval(updateStatus, 60000);
 
     return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+
+    let frameId;
+
+    const updateViewportOffset = () => {
+      window.cancelAnimationFrame(frameId);
+      frameId = window.requestAnimationFrame(() => {
+        const viewport = window.visualViewport;
+        const currentHeight = viewport?.height || window.innerHeight;
+        const currentWidth = viewport?.width || window.innerWidth;
+        const lock = viewportLock.current;
+        const widthChanged =
+          lock.width !== null && Math.abs(currentWidth - lock.width) > 24;
+
+        if (lock.height === null || widthChanged) {
+          lock.height = currentHeight;
+          lock.width = currentWidth;
+        }
+
+        lock.height = Math.min(lock.height, currentHeight);
+        lock.width = currentWidth;
+
+        setViewportOffset(Math.max(0, Math.round(currentHeight - lock.height)));
+      });
+    };
+
+    updateViewportOffset();
+    window.addEventListener("resize", updateViewportOffset);
+    window.visualViewport?.addEventListener("resize", updateViewportOffset);
+    window.visualViewport?.addEventListener("scroll", updateViewportOffset);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.removeEventListener("resize", updateViewportOffset);
+      window.visualViewport?.removeEventListener("resize", updateViewportOffset);
+      window.visualViewport?.removeEventListener("scroll", updateViewportOffset);
+    };
   }, []);
 
   function scrollToFooterSection(targetSelector, highlightSelectors) {
@@ -67,7 +109,14 @@ export default function MobileShopNav({ currentPage }) {
   }
 
   return (
-    <nav className="mobile-shop-nav" aria-label="Accesos rapidos de compra">
+    <nav
+      className="mobile-shop-nav"
+      aria-label="Accesos rapidos de compra"
+      style={{
+        "--mobile-shop-nav-y-offset": `-${viewportOffset}px`,
+        "--mobile-shop-nav-bottom-offset": `${viewportOffset}px`,
+      }}
+    >
       <button
         type="button"
         className="mobile-shop-nav__info mobile-shop-nav__info--delivery"

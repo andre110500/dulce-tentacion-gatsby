@@ -64,15 +64,16 @@ const catalogHeroSlides = [
   {
     id: "promo-placeholder",
     title: "Envios",
-    lines: ["Gratis en rayito", "hornero y santa"],
+    lines: ["Rayito Hornero", "y Santa Isabel"],
     visualLabel: "Repartidor de envios",
     imageType: "delivery",
   },
   {
     id: "season-placeholder",
-    title: "Nuevo",
-    lines: ["Placeholder para", "novedades"],
-    visualLabel: "Contenido pendiente",
+    title: "Sabores",
+    lines: ["Que enamoran"],
+    visualLabel: "Potes de helado de la semana",
+    imageType: "weekly-pots",
   },
 ];
 
@@ -369,7 +370,7 @@ function CatalogHero() {
 
   return (
     <section
-      className="catalog-hero"
+      className={`catalog-hero catalog-hero--${slide.id}`}
       aria-labelledby="catalog-title"
       aria-live="polite"
       onPointerDown={handlePointerDown}
@@ -421,6 +422,14 @@ function CatalogHero() {
           <StaticImage
             src="../images/delivery-slide.png"
             alt="Repartidor en moto para envios"
+            placeholder="blurred"
+            layout="constrained"
+            width={520}
+          />
+        ) : slide.imageType === "weekly-pots" ? (
+          <StaticImage
+            src="../images/weekly-pots-slide.jpeg"
+            alt="Potes de helado con salsa y rocklets"
             placeholder="blurred"
             layout="constrained"
             width={520}

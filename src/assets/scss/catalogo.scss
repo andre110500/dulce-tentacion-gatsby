@@ -787,6 +787,8 @@ body.modal-open {
     }
 
     .catalog-hero__copy {
+      min-width: 0;
+
       h1 {
         font-size: clamp(3.8rem, 15vw, 4.8rem);
         margin-bottom: 0.65rem;
@@ -794,6 +796,7 @@ body.modal-open {
       }
 
       p {
+        max-width: 8rem;
         font-size: clamp(1.1rem, 4.6vw, 1.35rem);
         line-height: 1.2;
       }
@@ -804,8 +807,24 @@ body.modal-open {
     }
 
     .catalog-hero__image {
-      width: 100%;
+      align-self: start;
+      justify-self: end;
+      width: min(9.8rem, 40vw);
+      margin-top: 3rem;
       transform: none;
+    }
+
+    .catalog-hero--promo-placeholder {
+      grid-template-columns: minmax(0, 47%) minmax(8.4rem, 1fr);
+
+      .catalog-hero__copy p {
+        max-width: 9.8rem;
+      }
+
+      .catalog-hero__image {
+        width: min(9.2rem, 38vw);
+        margin-top: 3.35rem;
+      }
     }
 
     .catalog-shell {
