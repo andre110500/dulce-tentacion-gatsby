@@ -65,7 +65,8 @@ const catalogHeroSlides = [
     id: "promo-placeholder",
     title: "Envios",
     lines: ["Gratis en rayito", "hornero y santa"],
-    visualLabel: "Imagen pendiente",
+    visualLabel: "Repartidor de envios",
+    imageType: "delivery",
   },
   {
     id: "season-placeholder",
@@ -412,6 +413,14 @@ function CatalogHero() {
           <StaticImage
             src="../images/catalog-banner.jpg"
             alt="Mostrador de heladeria Dulce Tentacion"
+            placeholder="blurred"
+            layout="constrained"
+            width={520}
+          />
+        ) : slide.imageType === "delivery" ? (
+          <StaticImage
+            src="../images/delivery-slide.png"
+            alt="Repartidor en moto para envios"
             placeholder="blurred"
             layout="constrained"
             width={520}
