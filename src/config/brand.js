@@ -1,9 +1,9 @@
 const brand = {
-  name: "Dulce Tentación",
-  legalName: "Dulce Tentación Marcos Paz",
+  name: "La Tentación",
+  legalName: "La Tentación Marcos Paz",
   description: "Catalogo online",
   author: "André Espinoza",
-  siteUrl: "https://dulce-tentacion-mp.netlify.app",
+  siteUrl: "https://latentacion.ar",
   metaImage: "/meta-image.png",
   manifestIcon: "src/images/brand/logo.png",
   location: {
@@ -16,8 +16,8 @@ const brand = {
     whatsappDisplay: "11-2169-0959",
     whatsappNumber: "5491121690959",
     whatsappMessage: "Hola vengo de la pagina web oficial !",
-    instagramHandle: "dulce.tentacion.mp",
-    instagramUrl: "https://www.instagram.com/dulce.tentacion.mp/",
+    instagramHandle: "latentacion.ar",
+    instagramUrl: "https://www.instagram.com/latentacion.ar/",
   },
   delivery: {
     mainArea: "Marcos Paz",

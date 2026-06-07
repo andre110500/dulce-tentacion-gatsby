@@ -408,7 +408,7 @@ function CatalogHero() {
         {slide.hasImage ? (
           <StaticImage
             src="../images/catalog-banner.jpg"
-            alt="Mostrador de heladeria Dulce Tentacion"
+            alt="Mostrador de heladeria"
             placeholder="blurred"
             layout="constrained"
             width={520}
