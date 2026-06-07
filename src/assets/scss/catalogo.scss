@@ -781,7 +781,7 @@ body.modal-open {
     .catalog-hero {
       min-height: 12.2rem;
       grid-template-columns: minmax(0, 1fr) minmax(8.5rem, 44%);
-      align-items: center;
+      align-items: end;
       gap: 0.75rem;
       padding: 1.15rem 1.4rem;
     }

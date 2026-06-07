@@ -69,10 +69,11 @@ const catalogHeroSlides = [
     imageType: "delivery",
   },
   {
-    id: "season-placeholder",
-    title: "Nuevo",
-    lines: ["Placeholder para", "novedades"],
-    visualLabel: "Contenido pendiente",
+    id: "sundae-slide",
+    title: "Antojos",
+    lines: ["Domingo con", "los mas ricos"],
+    visualLabel: "Helados servidos con toppings",
+    imageType: "sundae",
   },
 ];
 
@@ -421,6 +422,14 @@ function CatalogHero() {
           <StaticImage
             src="../images/delivery-slide.png"
             alt="Repartidor en moto para envios"
+            placeholder="blurred"
+            layout="constrained"
+            width={520}
+          />
+        ) : slide.imageType === "sundae" ? (
+          <StaticImage
+            src="../images/sundae-slide.jpeg"
+            alt="Helados servidos con salsas y toppings Dulce Tentacion"
             placeholder="blurred"
             layout="constrained"
             width={520}
