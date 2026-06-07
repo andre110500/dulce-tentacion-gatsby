@@ -156,7 +156,7 @@ footer {
 
 @media (max-width: 800px) {
   footer {
-    padding-bottom: 5rem;
+    padding-bottom: var(--mobile-shop-nav-reserved-space, 5.75rem);
 
     .container {
       grid-template-columns: repeat(2, minmax(0, 1fr));

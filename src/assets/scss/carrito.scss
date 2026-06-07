@@ -569,7 +569,7 @@
 
 @media (max-width: 720px) {
   #cart {
-    padding: 0 0.65rem 5.25rem;
+    padding: 0 0.65rem var(--mobile-shop-nav-reserved-space, 5.75rem);
 
     &.cart-empty-page {
       padding-bottom: 0;

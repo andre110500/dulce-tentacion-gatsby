@@ -39,6 +39,14 @@ export default function MobileShopNav({ currentPage }) {
     return () => clearInterval(intervalId);
   }, []);
 
+  useEffect(() => {
+    document.body.classList.add("mobile-shop-nav-active");
+
+    return () => {
+      document.body.classList.remove("mobile-shop-nav-active");
+    };
+  }, []);
+
   function scrollToFooterSection(targetSelector, highlightSelectors) {
     const targetSection = document.querySelector(targetSelector);
     const footer = document.querySelector("footer");

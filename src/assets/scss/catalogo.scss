@@ -776,7 +776,7 @@ body.modal-open {
 
 @media (max-width: 720px) {
   #catalog {
-    padding-bottom: 5.6rem;
+    padding-bottom: var(--mobile-shop-nav-reserved-space, 5.75rem);
 
     .catalog-hero {
       min-height: 12.2rem;
