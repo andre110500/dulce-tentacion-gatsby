@@ -1,12 +1,11 @@
 import "../assets/scss/footer.scss";
 import React from "react";
 import { FaInstagram, FaMapMarkedAlt, FaWhatsapp } from "react-icons/fa";
+import brand from "../config/brand";
 
-const WHATSAPP_URL =
-  "https://api.whatsapp.com/send?phone=5491121690959&text=Hola%20vengo%20de%20la%20pagina%20web%20oficial%20!";
-const MAPS_URL =
-  "https://www.google.com/maps/search/?api=1&query=El%20Malambo%201733%2C%20Marcos%20Paz";
-const INSTAGRAM_URL = "https://www.instagram.com/dulce.tentacion.mp/";
+const WHATSAPP_URL = `https://api.whatsapp.com/send?phone=${
+  brand.contact.whatsappNumber
+}&text=${encodeURIComponent(brand.contact.whatsappMessage)}`;
 
 export default function Footer() {
   return (
@@ -15,22 +14,22 @@ export default function Footer() {
         <div className="container">
           <div className="working-hours subcontainer">
             <h4>Horarios de atención</h4>
-            <p>Lunes a viernes de 20:30 a 24</p>
-            <p>Sábados y domingos de 13 a 24</p>
+            <p>{brand.hours.weekday}</p>
+            <p>{brand.hours.weekend}</p>
           </div>
           <div className="location subcontainer">
             <h4>Ubicación</h4>
-            <p>El Malambo 1733, Marcos Paz</p>
-            <p>Entre Dorrego y Beruti</p>
+            <p>{brand.location.address}</p>
+            <p>{brand.location.crossStreets}</p>
           </div>
           <div className="contact subcontainer">
             <h4>Contacto</h4>
-            <p>WhatsApp: 11-2169-0959</p>
+            <p>WhatsApp: {brand.contact.whatsappDisplay}</p>
           </div>
         </div>
 
         <div className="icons" aria-label="Redes y ubicación">
-          <a target="_blank" rel="noopener noreferrer" href={INSTAGRAM_URL}>
+          <a target="_blank" rel="noopener noreferrer" href={brand.contact.instagramUrl}>
             <FaInstagram aria-hidden="true" />
             <span>Instagram</span>
           </a>
@@ -42,7 +41,7 @@ export default function Footer() {
             className="footer-map-link"
             target="_blank"
             rel="noopener noreferrer"
-            href={MAPS_URL}
+            href={brand.location.mapsUrl}
           >
             <FaMapMarkedAlt aria-hidden="true" />
             <span>Google Maps</span>
@@ -50,7 +49,7 @@ export default function Footer() {
         </div>
 
         <div className="copyright">
-          <p>Copyright © 2023 | André Espinoza</p>
+          <p>Copyright © 2023 | {brand.author}</p>
         </div>
       </div>
     </footer>

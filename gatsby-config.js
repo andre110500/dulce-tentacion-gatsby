@@ -1,6 +1,9 @@
 require("dotenv").config({
   path: `.env.${process.env.NODE_ENV}`,
 });
+
+const brand = require("./src/config/brand");
+
 /**
  * Configure your Gatsby site with this file.
  *
@@ -12,23 +15,23 @@ require("dotenv").config({
  */
 module.exports = {
   siteMetadata: {
-    title: "Dulce Tentación",
-    description: "Catalogo online",
-    author: "André Espinoza",
-    image: `/meta-image.png`,
-    siteUrl: "https://dulce-tentacion-mp.netlify.app",
+    title: brand.name,
+    description: brand.description,
+    author: brand.author,
+    image: brand.metaImage,
+    siteUrl: brand.siteUrl,
   },
   plugins: [
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Dulce Tentación Marcos Paz`,
-        short_name: `Dulce Tentación`,
+        name: brand.legalName,
+        short_name: brand.name,
         start_url: `/`,
         background_color: `#FFFFFF`,
         theme_color: `#e8547e`,
         display: `standalone`,
-        icon: `src/images/logo512.png`,
+        icon: brand.manifestIcon,
       },
     },
     {

@@ -1,5 +1,7 @@
 // to make a line break use "\n"
 //tabs are visible on whatsapp
+import brand from "../config/brand";
+
 export function createMessage({
   cartItems,
   deliveryInfo,
@@ -95,7 +97,7 @@ export function createMessage({
 export function createWhatsAppLink(messageData) {
   const message = createMessage(messageData);
 
-  const phoneNumber = `5491121690959`;
+  const phoneNumber = brand.contact.whatsappNumber;
 
   // Encode the message text for use in the URL
   const encodedMessage = encodeURIComponent(message);

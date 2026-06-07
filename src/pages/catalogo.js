@@ -20,6 +20,7 @@ import {
 import { GiIcePop, GiIceCreamCone } from "react-icons/gi";
 import { PiPopsicleFill } from "react-icons/pi";
 import MobileShopNav from "../components/MobileShopNav";
+import BrandLogo from "../components/BrandLogo";
 
 const iceCreamSubTypes = [
   {
@@ -400,13 +401,7 @@ function CatalogHero() {
       </div>
 
       <div className="catalog-hero__logo" aria-hidden="true">
-        <StaticImage
-          src="../images/logo512.png"
-          alt=""
-          placeholder="blurred"
-          layout="constrained"
-          width={210}
-        />
+        <BrandLogo alt="" width={210} />
       </div>
 
       <div className="catalog-hero__image">

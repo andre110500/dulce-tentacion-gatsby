@@ -4,7 +4,7 @@ import { GlobalContext } from "../context/GlobalContext";
 import { Link } from "gatsby";
 import { useContext, useRef, useEffect, useState } from "react";
 import cartIcon from "../images/cart.svg";
-import { StaticImage } from "gatsby-plugin-image";
+import BrandLogo from "./BrandLogo";
 
 const tabsObj = ["Catalogo", "Nosotros", "Galeria", "Testimonios"];
 
@@ -35,12 +35,7 @@ export default function Header() {
     <header ref={headerRef}>
       <div className="content">
         <Link to="/" activeClassName="active">
-          <StaticImage
-            src="../images/logo-white.png"
-            alt="Logo"
-            placeholder="blurred"
-            className="logo"
-          />
+          <BrandLogo variant="white" />
         </Link>
         <div className="container">
           <nav>

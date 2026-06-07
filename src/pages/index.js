@@ -11,6 +11,7 @@ import TextCarousel from "../components/TextCarousel";
 import ImagesCarousel from "../components/ImagesCarousel";
 
 import { StaticImage } from "gatsby-plugin-image";
+import brand from "../config/brand";
 
 const stringsArray = [
   "Helado Artesanal de la mejor calidad",
@@ -172,7 +173,7 @@ export default function Home() {
       </section>
       <section className="call-to-action">
         <div className="content">
-          <h2>Envios a Marcos Paz y Mariano Acosta</h2>
+          <h2>{brand.delivery.homepageText}</h2>
           <div className="container">
             <StaticImage
               src="../images/online-shop.png"

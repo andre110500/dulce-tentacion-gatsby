@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link } from "gatsby";
 import { toZonedTime } from "date-fns-tz";
 import { GlobalContext } from "../context/GlobalContext";
+import brand from "../config/brand";
 import {
   FaClipboardList,
   FaMapMarkerAlt,
@@ -9,15 +10,15 @@ import {
   FaStore,
 } from "react-icons/fa";
 
-const TIME_ZONE = "America/Argentina/Buenos_Aires";
-
 function getStoreStatus() {
-  const argentinaTime = toZonedTime(new Date(), TIME_ZONE);
+  const argentinaTime = toZonedTime(new Date(), brand.hours.timezone);
   const day = argentinaTime.getDay();
   const minutes = argentinaTime.getHours() * 60 + argentinaTime.getMinutes();
   const isWeekend = day === 0 || day === 6;
-  const openingMinutes = isWeekend ? 13 * 60 : 20 * 60 + 30;
-  const closingMinutes = 24 * 60;
+  const openingMinutes = isWeekend
+    ? brand.hours.weekendOpeningMinutes
+    : brand.hours.weekdayOpeningMinutes;
+  const closingMinutes = brand.hours.closingMinutes;
 
   return minutes >= openingMinutes && minutes < closingMinutes;
 }
@@ -90,8 +91,8 @@ export default function MobileShopNav({ currentPage }) {
         <FaMapMarkerAlt aria-hidden="true" />
         <span>
           <strong>Entrega en</strong>
-          <span>Marcos Paz</span>
-          <small>y Santa Isabel</small>
+          <span>{brand.delivery.mainArea}</span>
+          <small>{brand.delivery.secondaryArea}</small>
         </span>
       </button>
 
