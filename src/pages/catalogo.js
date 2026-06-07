@@ -70,10 +70,10 @@ const catalogHeroSlides = [
   },
   {
     id: "sundae-slide",
-    title: "Antojos",
-    lines: ["Domingo con", "los mas ricos"],
-    visualLabel: "Helados servidos con toppings",
-    imageType: "sundae",
+    title: "Juntadas",
+    lines: ["Helado y", "bebidas"],
+    visualLabel: "Pedido completo con helado y bebidas",
+    imageType: "order",
   },
 ];
 
@@ -426,10 +426,10 @@ function CatalogHero() {
             layout="constrained"
             width={520}
           />
-        ) : slide.imageType === "sundae" ? (
+        ) : slide.imageType === "order" ? (
           <StaticImage
-            src="../images/sundae-slide.jpeg"
-            alt="Helados servidos con salsas y toppings Dulce Tentacion"
+            src="../images/catalog-friends-slide.png"
+            alt="Amigos compartiendo helado y bebidas"
             placeholder="blurred"
             layout="constrained"
             width={520}
