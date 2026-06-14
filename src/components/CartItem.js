@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { GlobalContext } from "../context/GlobalContext";
 import { useContext } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { GatsbyImage, getImage } from "gatsby-plugin-image";
 import DetailsSection from "./DetailsSection";
 import SauceSelector from "./SauceSelector";
@@ -62,6 +63,20 @@ export default function CartItem({ cartItem, sauceFlavours, allFlavours }) {
         },
       });
       setShowSauceSelector(false);
+    } else {
+      dispatch({
+        type: "add-addon-to-item",
+        payload: {
+          productId: product._id,
+          chosenFlavours: product.chosenFlavours,
+          addOns: {
+            sauces: {
+              price: saucePrice,
+              chosenSauces: [],
+            },
+          },
+        },
+      });
     }
   }
 
@@ -181,21 +196,31 @@ export default function CartItem({ cartItem, sauceFlavours, allFlavours }) {
           </button>
         </div>
       )}
-      {showSauceSelector && sauceFlavours && (
-        <div className="cart-sauce-selector">
-          <SauceSelector
-            sauces={sauceFlavours}
-            chosenSauces={currentSauces}
-            onChange={handleSauceChange}
-            maxSelections={1}
-            namePrefix={`sauce-${product._id}`}
-            disableWhenMaxed={false}
-          />
-          <button type="button" className="addon-btn cancel" onClick={() => setShowSauceSelector(false)}>
-            Cancelar
-          </button>
-        </div>
-      )}
+      <AnimatePresence>
+        {showSauceSelector && sauceFlavours && (
+          <motion.div
+            className="cart-sauce-selector"
+            key="sauce-selector"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            style={{ overflow: "hidden" }}
+          >
+            <SauceSelector
+              sauces={sauceFlavours}
+              chosenSauces={currentSauces}
+              onChange={handleSauceChange}
+              maxSelections={1}
+              namePrefix={`sauce-${product._id}`}
+              disableWhenMaxed={false}
+            />
+            <button type="button" className="addon-btn cancel" onClick={() => setShowSauceSelector(false)}>
+              Cancelar
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

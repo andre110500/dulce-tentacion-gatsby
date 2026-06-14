@@ -1,4 +1,5 @@
 import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { FaCheck } from "react-icons/fa";
 
 export default function SauceSelector({
@@ -40,11 +41,23 @@ export default function SauceSelector({
                       disabled={isDisabled}
                       name={`${namePrefix}-flavour`}
                       value={flavour.name}
+                      checked={isSelected}
                       onChange={onChange}
                     />
-                    {isSelected && (
-                      <FaCheck className="check-icon" aria-hidden="true" />
-                    )}
+                    <AnimatePresence>
+                      {isSelected && (
+                        <motion.span
+                          key="check"
+                          initial={{ opacity: 0, scale: 0.5 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.5 }}
+                          transition={{ duration: 0.25 }}
+                          style={{ display: "flex" }}
+                        >
+                          <FaCheck className="check-icon" aria-hidden="true" />
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
                     <span
                       className={`sauce-swatch sauce-swatch--${sauceClass}`}
                       aria-hidden="true"

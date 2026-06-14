@@ -1,5 +1,6 @@
 import React from "react";
 import { GatsbyImage, getImage } from "gatsby-plugin-image";
+import { motion, AnimatePresence } from "framer-motion";
 import RockletsIcon from "./RockletsIcon";
 
 function FlavourThumb({ flavour, flavourMap }) {
@@ -82,24 +83,44 @@ const DetailsSection = ({
         </div>
       )}
 
-      {hasAddOns && (
-        <div className="aderezos-section">
-          <span className="details-section__label">Aderezos</span>
-          <div className="aderezos-list">
+      <div className={`aderezos-section${hasAddOns ? "" : " aderezos-section--empty"}`}>
+        {hasAddOns && <span className="details-section__label">Aderezos</span>}
+        <div className="aderezos-list">
+          <AnimatePresence>
             {sauces.chosenSauces?.length > 0 &&
-              sauces.chosenSauces.map((s) => <SauceBadge key={s} sauce={s} price={sauces.price} />)}
+              sauces.chosenSauces.map((s) => (
+                <motion.span
+                  key={`sauce-${s}`}
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.85 }}
+                  transition={{ duration: 0.35 }}
+                  style={{ display: "inline-flex" }}
+                >
+                  <SauceBadge sauce={s} price={sauces.price} />
+                </motion.span>
+              ))}
             {rocklets.included && (
-              <span className="rocklets-badge">
-                <span className="rocklets-badge__icon">
-                  <RockletsIcon size={16} />
+              <motion.span
+                key="rocklets"
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.85 }}
+                transition={{ duration: 0.35 }}
+                style={{ display: "inline-flex" }}
+              >
+                <span className="rocklets-badge">
+                  <span className="rocklets-badge__icon">
+                    <RockletsIcon size={16} />
+                  </span>
+                  <span>Rocklets</span>
+                  <span className="rocklets-badge__price">${rocklets.price}</span>
                 </span>
-                <span>Rocklets</span>
-                <span className="rocklets-badge__price">${rocklets.price}</span>
-              </span>
+              </motion.span>
             )}
-          </div>
+          </AnimatePresence>
         </div>
-      )}
+      </div>
     </div>
   );
 };

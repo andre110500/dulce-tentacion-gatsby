@@ -266,6 +266,7 @@
       width: 1rem;
       height: 1rem;
       color: var(--form-pink);
+      animation: popIn 0.2s ease both;
     }
 
     .gatsby-image-wrapper,
@@ -589,6 +590,12 @@
       margin-top: 0.75rem;
       padding-top: 0.65rem;
       border-top: 1px solid var(--form-border);
+
+      &--empty {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+      }
     }
 
     .aderezos-list {
@@ -606,6 +613,7 @@
       background: var(--form-pink-soft);
       font-size: 0.85rem;
       font-weight: 700;
+      animation: badgeIn 0.25s ease both;
 
       .sauce-swatch {
         position: relative;
@@ -637,6 +645,7 @@
       background: #fff3e0;
       font-size: 0.85rem;
       font-weight: 700;
+      animation: badgeIn 0.25s ease both;
 
       &__icon {
         display: flex;
