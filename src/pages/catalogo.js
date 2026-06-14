@@ -2,6 +2,7 @@ import "../assets/scss/catalogo.scss";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { GlobalContext } from "../context/GlobalContext";
 import { graphql, navigate } from "gatsby";
+import { translateType, translateSubType } from "../data/translations";
 import { GatsbyImage, getImage, StaticImage } from "gatsby-plugin-image";
 import {
   FaChevronRight,
@@ -127,15 +128,15 @@ function buildSections(products) {
     const groups = [];
     for (const st of subTypeKeys) {
       if (st === "") continue;
-      groups.push({ id: st, label: st, icon: FaIceCream, items: bySubType[st] });
+      groups.push({ id: st, label: translateSubType(st), icon: FaIceCream, items: bySubType[st] });
     }
 
     const icon = sectionIcons[type] || FaIceCream;
 
     if (isFlat) {
-      sections.push({ id: type, label: type, title: type, icon, items: typeProducts });
+      sections.push({ id: type, label: translateType(type), title: translateType(type), icon, items: typeProducts });
     } else {
-      sections.push({ id: type, label: type, title: type, icon, groups });
+      sections.push({ id: type, label: translateType(type), title: translateType(type), icon, groups });
     }
   }
 
