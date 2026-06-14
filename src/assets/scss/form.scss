@@ -532,6 +532,20 @@
       }
     }
 
+    &__change-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 99rem;
+      background: var(--form-pink-soft);
+      color: var(--form-pink);
+      font-size: 0.78rem;
+      font-weight: 700;
+      box-shadow: none;
+      justify-self: start;
+    }
+
     .flavour-thumb {
       display: flex;
       align-items: center;

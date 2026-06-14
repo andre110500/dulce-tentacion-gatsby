@@ -183,13 +183,13 @@ export default function CartItem({ cartItem, sauceFlavours, allFlavours }) {
           }}
           chosenFlavours={product.chosenFlavours}
           flavourMap={flavourMap}
+          onChangeFlavours={() =>
+            navigate(`/form?id=${product._id}`, { state: { editingItem: product } })
+          }
         />
       )}
       {product.chosenFlavours && (
         <div className="cart-addon-buttons">
-          <button type="button" className="addon-btn" onClick={() => navigate(`/form?id=${product._id}`, { state: { editingItem: product } })}>
-            <FaIceCream aria-hidden="true" /> Cambiar sabores
-          </button>
           <button type="button" className="addon-btn" onClick={() => setShowSauceSelector((v) => !v)}>
             <FaIceCream aria-hidden="true" /> {currentSauces.length > 0 ? "Cambiar salsa" : "Agregar salsa"}
           </button>
