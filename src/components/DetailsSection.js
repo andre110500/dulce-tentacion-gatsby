@@ -28,7 +28,7 @@ function FlavourThumb({ flavour, flavourMap }) {
   );
 }
 
-function SauceBadge({ sauce }) {
+function SauceBadge({ sauce, price }) {
   const sauceClass = sauce
     .toLowerCase()
     .normalize("NFD")
@@ -39,6 +39,7 @@ function SauceBadge({ sauce }) {
     <span className="sauce-badge">
       <span className={`sauce-swatch sauce-swatch--${sauceClass}`} />
       <span>Salsa de {sauce}</span>
+      {price != null && <span className="sauce-badge__price">${price}</span>}
     </span>
   );
 }
@@ -76,7 +77,7 @@ const DetailsSection = ({
           <span className="details-section__label">Aderezos</span>
           <div className="aderezos-list">
             {sauces.chosenSauces?.length > 0 &&
-              sauces.chosenSauces.map((s) => <SauceBadge key={s} sauce={s} />)}
+              sauces.chosenSauces.map((s) => <SauceBadge key={s} sauce={s} price={sauces.price} />)}
             {rocklets.included && (
               <span className="rocklets-badge">
                 <span className="rocklets-badge__icon">

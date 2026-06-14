@@ -606,6 +606,11 @@
           display: none;
         }
       }
+
+      &__price {
+        color: var(--form-muted);
+        font-weight: 900;
+      }
     }
 
     .rocklets-badge {
