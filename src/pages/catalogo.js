@@ -2,7 +2,7 @@ import "../assets/scss/catalogo.scss";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { GlobalContext } from "../context/GlobalContext";
 import { graphql, navigate } from "gatsby";
-import { translateType, translateSubType } from "../data/translations";
+import { translateType, translateSubType, typeOrder, subTypeOrder } from "../data/translations";
 import { GatsbyImage, getImage, StaticImage } from "gatsby-plugin-image";
 import {
   FaChevronRight,
@@ -110,12 +110,21 @@ function buildSections(products) {
 
   const byType = {};
   for (const product of products) {
-    const type = getProductType(product);
+    let type = getProductType(product);
+    const st = getProductSubType(product);
+    if (st === "wafer-cone") type = "ice-cream";
     if (!byType[type]) byType[type] = [];
     byType[type].push(product);
   }
 
-  for (const [type, typeProducts] of Object.entries(byType)) {
+  const sortedTypes = Object.keys(byType).sort((a, b) => {
+    const ai = typeOrder.indexOf(a);
+    const bi = typeOrder.indexOf(b);
+    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+  });
+
+  for (const type of sortedTypes) {
+    const typeProducts = byType[type];
     const bySubType = {};
     for (const product of typeProducts) {
       const st = getProductSubType(product) || "";
@@ -123,12 +132,22 @@ function buildSections(products) {
       bySubType[st].push(product);
     }
 
-    const subTypeKeys = Object.keys(bySubType);
+    const subTypeKeys = Object.keys(bySubType).sort((a, b) => {
+      const order = subTypeOrder[type] || [];
+      const ai = order.indexOf(a);
+      const bi = order.indexOf(b);
+      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+    });
     const isFlat = subTypeKeys.length === 1 && subTypeKeys[0] === "";
     const groups = [];
     for (const st of subTypeKeys) {
-      if (st === "") continue;
-      groups.push({ id: st, label: translateSubType(st), icon: FaIceCream, items: bySubType[st] });
+      if (st === "wafer-cone") {
+        groups.push({ id: st, label: "Agregados", icon: FaIceCream, items: bySubType[st] });
+      } else if (st === "") {
+        groups.push({ id: st, label: "", icon: null, items: bySubType[st] });
+      } else {
+        groups.push({ id: st, label: translateSubType(st), icon: FaIceCream, items: bySubType[st] });
+      }
     }
 
     const icon = sectionIcons[type] || FaIceCream;
@@ -384,12 +403,14 @@ function CatalogSection({ section, isCompact, setActiveCategory }) {
 
             return (
               <div className="catalog-subsection" key={group.id}>
-                <div className="catalog-subsection__header">
-                  <span>
-                    <GroupIcon aria-hidden="true" />
-                  </span>
-                  <h3>{group.label}</h3>
-                </div>
+                {group.label && (
+                  <div className="catalog-subsection__header">
+                    <span>
+                      <GroupIcon aria-hidden="true" />
+                    </span>
+                    <h3>{group.label}</h3>
+                  </div>
+                )}
                 <div className="product-cards">
                   {group.items.map((product) => (
                     <Card key={product._id} product={product} />

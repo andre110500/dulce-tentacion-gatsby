@@ -19,5 +19,20 @@ export const subTypeLabels = {
   popsicle: "Paletas",
 };
 
+export const typeOrder = [
+  "ice-cream",
+  "frozen-treat",
+  "drink",
+  "cigarette",
+  "add-on",
+];
+
+export const subTypeOrder = {
+  "ice-cream": ["", "wafer-cone"],
+  drink: ["soft-drink", "can", "wine", "fernet", "liqueur", "small-bottle"],
+  "frozen-treat": ["popsicle", "dessert"],
+};
+
 export const translateType = (type) => typeLabels[type] || type;
 export const translateSubType = (subType) => subTypeLabels[subType] || subType;
+
