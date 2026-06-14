@@ -1,4 +1,47 @@
 import React from "react";
+import { GatsbyImage, getImage } from "gatsby-plugin-image";
+import RockletsIcon from "./RockletsIcon";
+
+function FlavourThumb({ flavour, flavourMap }) {
+  const data = flavourMap[flavour.toLowerCase()];
+  const image = data ? getImage(data.localImage) : null;
+
+  return (
+    <div className="flavour-thumb" title={flavour}>
+      <div className="flavour-thumb__image">
+        {image ? (
+          <GatsbyImage
+            image={image}
+            alt={flavour}
+            imgStyle={{ objectFit: "cover" }}
+          />
+        ) : data?.imgUrl ? (
+          <img src={data.imgUrl} alt={flavour} />
+        ) : (
+          <div className="flavour-thumb--fallback">
+            <span>{flavour[0]}</span>
+          </div>
+        )}
+      </div>
+      <span className="flavour-thumb__label">{flavour}</span>
+    </div>
+  );
+}
+
+function SauceBadge({ sauce }) {
+  const sauceClass = sauce
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "-");
+
+  return (
+    <span className="sauce-badge">
+      <span className={`sauce-swatch sauce-swatch--${sauceClass}`} />
+      <span>Salsa de {sauce}</span>
+    </span>
+  );
+}
 
 const DetailsSection = ({
   product,
@@ -6,50 +49,45 @@ const DetailsSection = ({
   sauces,
   priceWithAddOns,
   chosenFlavours = [],
+  flavourMap = {},
 }) => {
   const hasAddOns = sauces.chosenSauces?.length > 0 || rocklets.included;
 
   return (
     <div className="details-section">
-      <p>
-        {product.name}:{" "}
-        <span className={hasAddOns ? "" : "subtotal"}>${product.price}</span>
+      <p className="details-section__title">
+        {product.name}
+        <span className="details-section__price">${hasAddOns ? priceWithAddOns : product.price}</span>
       </p>
 
-      <h5>Sabores</h5>
-      <ul>
-        {chosenFlavours.length > 0 ? (
-          chosenFlavours.map((flavour) => <li key={flavour}>{flavour}</li>)
-        ) : (
-          <li>Sin sabores seleccionados</li>
-        )}
-      </ul>
-
-      {(sauces.chosenSauces?.length > 0 || rocklets.included) && (
-        <div className="aderezos-section">
-          <h5>Aderezos</h5>
-
-          {sauces.chosenSauces?.length > 0 && (
-            <p>
-              <strong>Salsa de {sauces.chosenSauces[0]}</strong>
-              <span>${sauces.price}</span>
-            </p>
-          )}
-
-          {rocklets.included && (
-            <p>
-              <strong>Rocklets</strong>
-              <span>${rocklets.price}</span>
-            </p>
-          )}
+      {chosenFlavours.length > 0 && (
+        <div className="flavours-row">
+          <span className="details-section__label">Sabores</span>
+          <div className="flavours-row__list">
+            {chosenFlavours.map((flavour) => (
+              <FlavourThumb key={flavour} flavour={flavour} flavourMap={flavourMap} />
+            ))}
+          </div>
         </div>
       )}
 
       {hasAddOns && (
-        <p>
-          {product.name} + aderezos:
-          <span className="subtotal">${priceWithAddOns}</span>
-        </p>
+        <div className="aderezos-section">
+          <span className="details-section__label">Aderezos</span>
+          <div className="aderezos-list">
+            {sauces.chosenSauces?.length > 0 &&
+              sauces.chosenSauces.map((s) => <SauceBadge key={s} sauce={s} />)}
+            {rocklets.included && (
+              <span className="rocklets-badge">
+                <span className="rocklets-badge__icon">
+                  <RockletsIcon size={16} />
+                </span>
+                <span>Rocklets</span>
+                <span className="rocklets-badge__price">${rocklets.price}</span>
+              </span>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

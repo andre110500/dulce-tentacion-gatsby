@@ -27,15 +27,16 @@ export default function Cart() {
   const [textCopied, setTextCopied] = useState(false);
 
   const flavourData = useStaticQuery(graphql`
-    query CartSauceFlavours {
+    query CartFlavours {
       allFlavour {
         nodes {
           apiRoute
           name
+          imgUrl
           outOfStock
           localImage {
             childImageSharp {
-              gatsbyImageData(width: 48, height: 48, layout: FIXED)
+              gatsbyImageData(width: 56, height: 56, layout: FIXED)
             }
           }
         }
@@ -45,6 +46,7 @@ export default function Cart() {
   const sauceFlavours = flavourData.allFlavour.nodes.filter(
     (flavour) => flavour.apiRoute === "generic/sauce"
   );
+  const allFlavours = flavourData.allFlavour.nodes;
 
   function getAllIceCreamDiscounts() {
     function countFlavourAppearances(flavour) {
@@ -244,7 +246,7 @@ export default function Cart() {
               <section className="product-cards">
                 {cartItems.map((cartItem, index) => {
                   return (
-                    <CartItem cartItem={cartItem} sauceFlavours={sauceFlavours} key={`cart-item-${index}`} />
+                    <CartItem cartItem={cartItem} sauceFlavours={sauceFlavours} allFlavours={allFlavours} key={`cart-item-${index}`} />
                   );
                 })}
               </section>

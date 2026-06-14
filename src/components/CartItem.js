@@ -26,7 +26,7 @@ async function handleToggleRocklets(dispatch, product) {
   Swal.fire(!current ? "Agregado" : "Quitado", !current ? "Rocklets agregados" : "Rocklets quitados", "success");
 }
 
-export default function CartItem({ cartItem, sauceFlavours }) {
+export default function CartItem({ cartItem, sauceFlavours, allFlavours }) {
   const { dispatch } = useContext(GlobalContext);
   const product = cartItem.product;
   const image = getImage(product.localImage);
@@ -35,6 +35,15 @@ export default function CartItem({ cartItem, sauceFlavours }) {
 
   const currentSauces = product.addOns?.sauces?.chosenSauces || [];
   const saucePrice = product.addOns?.sauces?.price || 500;
+
+  const flavourMap = React.useMemo(() => {
+    if (!allFlavours) return {};
+    const map = {};
+    allFlavours.forEach((f) => {
+      map[f.name.toLowerCase()] = f;
+    });
+    return map;
+  }, [allFlavours]);
 
   function handleSauceChange(e) {
     const { value, checked } = e.target;
@@ -159,6 +168,7 @@ export default function CartItem({ cartItem, sauceFlavours }) {
             chosenSauces: currentSauces,
           }}
           chosenFlavours={product.chosenFlavours}
+          flavourMap={flavourMap}
         />
       )}
       {product.chosenFlavours && (

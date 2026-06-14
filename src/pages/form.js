@@ -326,6 +326,9 @@ export default function IceCreamForm({ data, location }) {
                 }}
                 priceWithAddOns={totalPrice}
                 chosenFlavours={mainMenuChosenFlavours}
+                flavourMap={Object.fromEntries(
+                  allFlavours.map((f) => [f.name.toLowerCase(), f])
+                )}
               />
             </section>
           </>
