@@ -23,8 +23,6 @@ async function handleToggleRocklets(dispatch, product) {
       },
     },
   });
-  const { default: Swal } = await import("sweetalert2");
-  Swal.fire(!current ? "Agregado" : "Quitado", !current ? "Rocklets agregados" : "Rocklets quitados", "success");
 }
 
 export default function CartItem({ cartItem, sauceFlavours, allFlavours }) {
