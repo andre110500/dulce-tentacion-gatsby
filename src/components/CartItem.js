@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { GlobalContext } from "../context/GlobalContext";
 import { useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { navigate } from "gatsby";
 import { GatsbyImage, getImage } from "gatsby-plugin-image";
 import DetailsSection from "./DetailsSection";
 import SauceSelector from "./SauceSelector";
@@ -182,6 +183,9 @@ export default function CartItem({ cartItem, sauceFlavours, allFlavours }) {
           }}
           chosenFlavours={product.chosenFlavours}
           flavourMap={flavourMap}
+          onEdit={() =>
+            navigate(`/form?id=${product._id}`, { state: { editingItem: product } })
+          }
         />
       )}
       {product.chosenFlavours && (

@@ -20,9 +20,16 @@ export default function IceCreamForm({ data, location }) {
   const productIdParam = allParams.get("id");
   const products = data.allProduct.edges;
   const allFlavours = data.allFlavour.nodes;
-  const [rockletsChecked, setRockletsChecked] = useState(false);
-  const [mainMenuChosenFlavours, setMainMenuChosenFlavours] = useState([]);
-  const [sauceMenuChosenFlavours, setSauceMenuChosenFlavours] = useState([]);
+  const editingItem = location.state?.editingItem;
+  const [rockletsChecked, setRockletsChecked] = useState(
+    editingItem?.addOns?.rocklets?.included || false
+  );
+  const [mainMenuChosenFlavours, setMainMenuChosenFlavours] = useState(
+    editingItem?.chosenFlavours || []
+  );
+  const [sauceMenuChosenFlavours, setSauceMenuChosenFlavours] = useState(
+    editingItem?.addOns?.sauces?.chosenSauces || []
+  );
   if (!productIdParam) {
     return <p>Page not found</p>; // Or redirect to a 404 page
   }
@@ -83,36 +90,48 @@ export default function IceCreamForm({ data, location }) {
     const buttonSubmitter = e.nativeEvent.submitter;
     const buttonName = buttonSubmitter.name;
     if (mainMenuChosenFlavours.length > 0) {
-      dispatch({
-        type: "add-cart-item",
-        payload: {
-          id: product._id,
-          product: {
-            ...product,
-            addOns: {
-              sauces: {
-                price: saucePrice,
-                chosenSauces:
-                  sauceMenuChosenFlavours.length > 0
-                    ? sauceMenuChosenFlavours
-                    : undefined,
-              },
-              rocklets: { price: rockletsPrice, included: rockletsChecked },
-            },
-            priceWithAddOns: totalPrice,
-            chosenFlavours:
-              mainMenuChosenFlavours.length > 0
-                ? mainMenuChosenFlavours
+      const newProduct = {
+        ...product,
+        addOns: {
+          sauces: {
+            price: saucePrice,
+            chosenSauces:
+              sauceMenuChosenFlavours.length > 0
+                ? sauceMenuChosenFlavours
                 : undefined,
           },
-          quantity: 1,
+          rocklets: { price: rockletsPrice, included: rockletsChecked },
         },
-      });
-      if (buttonName == "go to cart") {
-        navigate("/carrito");
+        priceWithAddOns: totalPrice,
+        chosenFlavours:
+          mainMenuChosenFlavours.length > 0
+            ? mainMenuChosenFlavours
+            : undefined,
+      };
+
+      if (editingItem) {
+        dispatch({
+          type: "replace-cart-item",
+          payload: {
+            oldIdentity: {
+              _id: editingItem._id,
+              chosenFlavours: editingItem.chosenFlavours,
+            },
+            newProduct,
+          },
+        });
       } else {
-        navigate("/catalogo");
+        dispatch({
+          type: "add-cart-item",
+          payload: {
+            id: product._id,
+            product: newProduct,
+            quantity: 1,
+          },
+        });
       }
+
+      navigate("/carrito");
     } else {
       Swal.fire(
         `Elige por lo menos un sabor`,
@@ -334,10 +353,14 @@ export default function IceCreamForm({ data, location }) {
           </>
         )}
         <div className="buttons-container">
-          <button name="go to cart">Comprar ahora 🛒</button>
-          <button name="go to catalog">
+          <button name="go to cart">{editingItem ? "Guardar cambios" : "Comprar ahora"} 🛒</button>
+          <button
+            type={editingItem ? "button" : "submit"}
+            name={editingItem ? undefined : "go to catalog"}
+            onClick={editingItem ? () => navigate("/carrito") : undefined}
+          >
             <FaChevronLeft aria-hidden="true" />
-            Seguir comprando
+            {editingItem ? "Cancelar" : "Seguir comprando"}
           </button>
         </div>
       </form>

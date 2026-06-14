@@ -1,6 +1,7 @@
 import React from "react";
 import { GatsbyImage, getImage } from "gatsby-plugin-image";
 import { motion, AnimatePresence } from "framer-motion";
+import { FaPen } from "react-icons/fa";
 import RockletsIcon from "./RockletsIcon";
 
 function FlavourThumb({ flavour, flavourMap }) {
@@ -52,6 +53,7 @@ const DetailsSection = ({
   priceWithAddOns,
   chosenFlavours = [],
   flavourMap = {},
+  onEdit,
 }) => {
   const hasAddOns = sauces.chosenSauces?.length > 0 || rocklets.included;
 
@@ -79,6 +81,11 @@ const DetailsSection = ({
             {chosenFlavours.map((flavour) => (
               <FlavourThumb key={flavour} flavour={flavour} flavourMap={flavourMap} />
             ))}
+            {onEdit && (
+              <button type="button" className="details-section__edit-btn" onClick={onEdit} aria-label="Editar sabores">
+                <FaPen aria-hidden="true" />
+              </button>
+            )}
           </div>
         </div>
       )}

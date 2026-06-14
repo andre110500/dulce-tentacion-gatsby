@@ -40,16 +40,17 @@ export default function GlobalContextProvider({ children }) {
     let isProductInCart;
     let quantity;
 
+    function areArraysEqual(arr1, arr2) {
+      if (!arr1 || !arr2) return false;
+      if (arr1.length !== arr2.length) return false;
+      const sortedArr1 = [...arr1].sort();
+      const sortedArr2 = [...arr2].sort();
+      return sortedArr1.every((value, index) => value === sortedArr2[index]);
+    }
+
     if (action.payload && action.payload.product) {
       product = action.payload.product;
       quantity = action.payload.quantity;
-      // Helper function to check if two arrays contain the same elements (ignoring order)
-      function areArraysEqual(arr1, arr2) {
-        if (arr1.length !== arr2.length) return false;
-        const sortedArr1 = [...arr1].sort();
-        const sortedArr2 = [...arr2].sort();
-        return sortedArr1.every((value, index) => value === sortedArr2[index]);
-      }
       isProductInCart = () => {
         return cartItems.some((cartItem) => {
           //check if it is scoped ice cream
@@ -154,6 +155,30 @@ export default function GlobalContextProvider({ children }) {
       }
       case "remove-stack": {
         cartItemsCopy.splice(indexOfProductInCart(), 1);
+        return cartItemsCopy;
+      }
+      case "replace-cart-item": {
+        const { oldIdentity, newProduct } = action.payload;
+        const targetIndex = cartItemsCopy.findIndex((item) => {
+          if (item.product._id !== oldIdentity._id) return false;
+          return areArraysEqual(
+            item.product.chosenFlavours || [],
+            oldIdentity.chosenFlavours || []
+          );
+        });
+        if (targetIndex !== -1) {
+          const oldCount = cartItemsCopy[targetIndex].count;
+          cartItemsCopy[targetIndex] = {
+            product: newProduct,
+            count: oldCount,
+            getTotalCartItemPrice() {
+              if (this.product.priceWithAddOns) {
+                return this.product.priceWithAddOns * this.count;
+              }
+              return this.product.price * this.count;
+            },
+          };
+        }
         return cartItemsCopy;
       }
       case "add-addon-to-item": {
