@@ -1,15 +1,60 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { GlobalContext } from "../context/GlobalContext";
 import { useContext } from "react";
 import { GatsbyImage, getImage } from "gatsby-plugin-image";
 import DetailsSection from "./DetailsSection";
+import SauceSelector from "./SauceSelector";
 import { SharedCardDescription } from "./SharedCardSections";
-import { FaMinus, FaPlus, FaTrashAlt } from "react-icons/fa";
-export default function CartItem({ cartItem }) {
+import { FaMinus, FaPlus, FaTrashAlt, FaIceCream } from "react-icons/fa";
+
+async function handleToggleRocklets(dispatch, product) {
+  const current = product.addOns?.rocklets?.included || false;
+  dispatch({
+    type: "add-addon-to-item",
+    payload: {
+      productId: product._id,
+      chosenFlavours: product.chosenFlavours,
+      addOns: {
+        rocklets: {
+          price: product.addOns?.rocklets?.price || 1500,
+          included: !current,
+        },
+      },
+    },
+  });
+  const { default: Swal } = await import("sweetalert2");
+  Swal.fire(!current ? "Agregado" : "Quitado", !current ? "Rocklets agregados" : "Rocklets quitados", "success");
+}
+
+export default function CartItem({ cartItem, sauceFlavours }) {
   const { dispatch } = useContext(GlobalContext);
   const product = cartItem.product;
   const image = getImage(product.localImage);
   const inputRef = useRef(null);
+  const [showSauceSelector, setShowSauceSelector] = useState(false);
+
+  const currentSauces = product.addOns?.sauces?.chosenSauces || [];
+  const saucePrice = product.addOns?.sauces?.price || 500;
+
+  function handleSauceChange(e) {
+    const { value, checked } = e.target;
+    if (checked) {
+      dispatch({
+        type: "add-addon-to-item",
+        payload: {
+          productId: product._id,
+          chosenFlavours: product.chosenFlavours,
+          addOns: {
+            sauces: {
+              price: saucePrice,
+              chosenSauces: [value],
+            },
+          },
+        },
+      });
+      setShowSauceSelector(false);
+    }
+  }
 
   return (
     <div className="product-card cart-product-card">
@@ -101,20 +146,45 @@ export default function CartItem({ cartItem }) {
           </div>
         </>
       )}
-      {product.chosenFlavours && (
+      {product.chosenFlavours && product.addOns && (
         <DetailsSection
           product={product}
           rocklets={{
-            price: product.addOns.rocklets.price,
-            included: product.addOns.rocklets.included,
+            price: product.addOns.rocklets?.price || 1500,
+            included: product.addOns.rocklets?.included || false,
           }}
           priceWithAddOns={product.priceWithAddOns}
           sauces={{
-            price: product.addOns.sauces.price,
-            chosenSauces: product.addOns.sauces.chosenSauces,
+            price: product.addOns.sauces?.price || 500,
+            chosenSauces: currentSauces,
           }}
           chosenFlavours={product.chosenFlavours}
         />
+      )}
+      {product.chosenFlavours && (
+        <div className="cart-addon-buttons">
+          <button type="button" className="addon-btn" onClick={() => setShowSauceSelector((v) => !v)}>
+            <FaIceCream aria-hidden="true" /> {currentSauces.length > 0 ? "Cambiar salsa" : "Agregar salsa"}
+          </button>
+          <button type="button" className="addon-btn" onClick={() => handleToggleRocklets(dispatch, product)}>
+            <FaIceCream aria-hidden="true" /> {product.addOns?.rocklets?.included ? "Quitar rocklets" : "Agregar rocklets"}
+          </button>
+        </div>
+      )}
+      {showSauceSelector && sauceFlavours && (
+        <div className="cart-sauce-selector">
+          <SauceSelector
+            sauces={sauceFlavours}
+            chosenSauces={currentSauces}
+            onChange={handleSauceChange}
+            maxSelections={1}
+            namePrefix={`sauce-${product._id}`}
+            disableWhenMaxed={false}
+          />
+          <button type="button" className="addon-btn cancel" onClick={() => setShowSauceSelector(false)}>
+            Cancelar
+          </button>
+        </div>
       )}
     </div>
   );

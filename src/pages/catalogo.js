@@ -4,8 +4,6 @@ import { GlobalContext } from "../context/GlobalContext";
 import { graphql, navigate } from "gatsby";
 import { GatsbyImage, getImage, StaticImage } from "gatsby-plugin-image";
 import {
-  FaBirthdayCake,
-  FaBeer,
   FaChevronRight,
   FaHeart,
   FaIceCream,
@@ -17,42 +15,9 @@ import {
   FaTimes,
   FaWineBottle,
 } from "react-icons/fa";
-import { GiIcePop, GiIceCreamCone } from "react-icons/gi";
-import { PiPopsicleFill } from "react-icons/pi";
+import { GiIceCreamCone } from "react-icons/gi";
 import MobileShopNav from "../components/MobileShopNav";
 import BrandLogo from "../components/BrandLogo";
-
-const iceCreamSubTypes = [
-  {
-    id: "tub",
-    label: "Potes",
-    icon: FaIceCream,
-    matcher: (product) =>
-      /(kg|1\/2|1\/4|kilo|cuarto|medio|helado artesanal)/i.test(
-        `${product.name} ${product.description || ""}`
-      ),
-  },
-  {
-    id: "wafer-cone",
-    label: "Cucuruchos",
-    icon: GiIceCreamCone,
-    matcher: (product) =>
-      getProductType(product) === "add-on" &&
-      getProductSubType(product) === "wafer-cone",
-  },
-  { id: "dessert", label: "Postres", icon: FaBirthdayCake },
-  { id: "popsicle", label: "Palitos", icon: GiIcePop },
-  { id: "cone", label: "Conos", icon: GiIceCreamCone },
-];
-
-const drinkSubTypes = [
-  { id: "can", label: "Latas", icon: FaBeer },
-  { id: "small-bottle", label: "Petacas", icon: FaWineBottle },
-  { id: "wine", label: "Vinos", icon: FaWineBottle },
-  { id: "fernet", label: "Fernet", icon: FaWineBottle },
-  { id: "liqueur", label: "Licores", icon: FaWineBottle },
-  { id: "soft-drink", label: "Sin alcohol", icon: FaBeer },
-];
 
 const catalogHeroSlides = [
   {
@@ -81,20 +46,28 @@ const catalogHeroSlides = [
 const getProductType = (product) => product.type || product.productType;
 const getProductSubType = (product) => product.subType || product.subtype;
 const isFormOnlyAddOn = (product) =>
-  getProductType(product) === "add-on" &&
-  (getProductSubType(product) === "pot-topping" ||
-    /salsa/i.test(product.name) ||
-    /rockl(?:et|e)t?s/i.test(product.name));
+  getProductSubType(product) === "pot-topping";
+
+const typeIcons = {
+  drink: FaWineBottle,
+  cigarette: FaSmoking,
+};
+
+const subTypeIcons = {
+  "wafer-cone": GiIceCreamCone,
+};
 
 function getProductPlaceholderIcon(product) {
-  const productType = getProductType(product);
-
-  if (productType === "drink") return FaWineBottle;
-  if (productType === "cigarette") return FaSmoking;
-  if (getProductSubType(product) === "wafer-cone") return GiIceCreamCone;
-
-  return FaIceCream;
+  return typeIcons[getProductType(product)] || subTypeIcons[getProductSubType(product)] || FaIceCream;
 }
+
+const sectionIcons = {
+  "ice-cream": FaIceCream,
+  "frozen-treat": FaIceCream,
+  drink: FaWineBottle,
+  "add-on": GiIceCreamCone,
+  cigarette: FaSmoking,
+};
 
 function getSectionItemCount(section) {
   if (section.groups) {
@@ -132,135 +105,41 @@ function getVisibleProducts(products) {
 }
 
 function buildSections(products) {
-  const usedProductIds = new Set();
-
   const sections = [];
-  const iceCreamGroups = iceCreamSubTypes
-    .map((subType) => ({
-      ...subType,
-      items: products.filter((product) => {
-        if (usedProductIds.has(product._id)) return false;
 
-        const productSubType = getProductSubType(product);
-        const belongsToGroup = subType.matcher
-          ? productSubType === subType.id || subType.matcher(product)
-          : productSubType === subType.id;
-
-        if (belongsToGroup) {
-          usedProductIds.add(product._id);
-        }
-
-        return belongsToGroup;
-      }),
-    }))
-    .filter((group) => group.items.length > 0);
-
-  if (iceCreamGroups.length > 0) {
-    sections.push({
-      id: "helados",
-      label: "Helados",
-      title: "Helados",
-      icon: FaIceCream,
-      groups: iceCreamGroups,
-    });
+  const byType = {};
+  for (const product of products) {
+    const type = getProductType(product);
+    if (!byType[type]) byType[type] = [];
+    byType[type].push(product);
   }
 
-  const drinkProducts = products.filter(
-    (product) =>
-      getProductType(product) === "drink" && !usedProductIds.has(product._id)
-  );
-
-  if (drinkProducts.length > 0) {
-    const knownSubTypes = new Set(drinkSubTypes.map(({ id }) => id));
-    const groups = drinkSubTypes
-      .map((subType) => ({
-        ...subType,
-        items: drinkProducts.filter(
-          (product) => getProductSubType(product) === subType.id
-        ),
-      }))
-      .filter((group) => group.items.length > 0);
-
-    const otherDrinkItems = drinkProducts.filter(
-      (product) => !knownSubTypes.has(getProductSubType(product))
-    );
-
-    if (otherDrinkItems.length > 0) {
-      groups.push({
-        id: "other-drinks",
-        label: "Otras bebidas",
-        icon: FaBeer,
-        items: otherDrinkItems,
-      });
+  for (const [type, typeProducts] of Object.entries(byType)) {
+    const bySubType = {};
+    for (const product of typeProducts) {
+      const st = getProductSubType(product) || "";
+      if (!bySubType[st]) bySubType[st] = [];
+      bySubType[st].push(product);
     }
 
-    drinkProducts.forEach((product) => usedProductIds.add(product._id));
+    const subTypeKeys = Object.keys(bySubType);
+    const isFlat = subTypeKeys.length === 1 && subTypeKeys[0] === "";
+    const groups = [];
+    for (const st of subTypeKeys) {
+      if (st === "") continue;
+      groups.push({ id: st, label: st, icon: FaIceCream, items: bySubType[st] });
+    }
 
-    sections.push({
-      id: "bebidas",
-      label: "Bebidas",
-      title: "Bebidas",
-      icon: FaWineBottle,
-      groups,
-    });
+    const icon = sectionIcons[type] || FaIceCream;
+
+    if (isFlat) {
+      sections.push({ id: type, label: type, title: type, icon, items: typeProducts });
+    } else {
+      sections.push({ id: type, label: type, title: type, icon, groups });
+    }
   }
 
-  const addOnProducts = products.filter(
-    (product) =>
-      getProductType(product) === "add-on" &&
-      getProductSubType(product) !== "wafer-cone" &&
-      !isFormOnlyAddOn(product) &&
-      !usedProductIds.has(product._id)
-  );
-
-  if (addOnProducts.length > 0) {
-    addOnProducts.forEach((product) => usedProductIds.add(product._id));
-
-    sections.push({
-      id: "extras",
-      label: "Extras",
-      title: "Extras para tu pedido",
-      icon: GiIceCreamCone,
-      items: addOnProducts,
-      limit: 8,
-    });
-  }
-
-  const cigaretteProducts = products.filter(
-    (product) =>
-      getProductType(product) === "cigarette" && !usedProductIds.has(product._id)
-  );
-
-  if (cigaretteProducts.length > 0) {
-    cigaretteProducts.forEach((product) => usedProductIds.add(product._id));
-
-    sections.push({
-      id: "cigarrillos",
-      label: "Cigarrillos",
-      title: "Cigarrillos",
-      icon: FaSmoking,
-      items: cigaretteProducts,
-      limit: 8,
-    });
-  }
-
-  const uncategorized = products.filter(
-    (product) => !usedProductIds.has(product._id)
-  );
-
-  if (uncategorized.length === 0) return sections;
-
-  return [
-    ...sections,
-    {
-      id: "otros",
-      label: "Otros",
-      title: "Otros Favoritos",
-      icon: PiPopsicleFill,
-      items: uncategorized,
-      limit: 8,
-    },
-  ];
+  return sections;
 }
 
 export default function Shop(props) {
@@ -531,7 +410,7 @@ function CatalogSection({ section, isCompact, setActiveCategory }) {
 }
 
 function Card({ product }) {
-  const { dispatch } = useContext(GlobalContext);
+  const { dispatch, cartItems } = useContext(GlobalContext);
   const image = getImage(product.localImage);
   const buttonRef = useRef(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);

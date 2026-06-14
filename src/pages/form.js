@@ -8,6 +8,7 @@ import { GatsbyImage, getImage } from "gatsby-plugin-image";
 import { navigate } from "gatsby";
 import { graphql } from "gatsby";
 import DetailsSection from "../components/DetailsSection";
+import SauceSelector from "../components/SauceSelector";
 import {
   FaCheck,
   FaChevronLeft,
@@ -242,17 +243,26 @@ export default function IceCreamForm({ data, location }) {
           product.flavours || 1
         )}
 
-        <>
-          {product.apiRoute === "generic/flavour" &&
-            unorderedList(
-              saucesFlavours,
-              "generic/sauce",
-              handleSauceMenuChange,
-              sauceMenuChosenFlavours,
-              "sauce",
-              1
-            )}
-        </>
+        {product.apiRoute === "generic/flavour" && (
+          <section className="choice-section choice-section--addons">
+            <div className="choice-section__header">
+              <div>
+                <p>Opcional</p>
+                <h2>Elegí una salsa (${saucePrice})</h2>
+              </div>
+            </div>
+            <div className="choice-group">
+              <h3>Salsas</h3>
+              <SauceSelector
+                sauces={saucesFlavours}
+                chosenSauces={sauceMenuChosenFlavours}
+                onChange={handleSauceMenuChange}
+                maxSelections={1}
+                namePrefix="sauce"
+              />
+            </div>
+          </section>
+        )}
 
         {product.apiRoute === "generic/flavour" && (
           <>

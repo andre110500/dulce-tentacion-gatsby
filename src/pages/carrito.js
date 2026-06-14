@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { GlobalContext } from "../context/GlobalContext";
 
 import { useContext } from "react";
-import { Link } from "gatsby";
+import { Link, graphql, useStaticQuery } from "gatsby";
 
 import Swal from "sweetalert2";
 import { createWhatsAppLink, createMessage } from "../logic/whatsappLink";
@@ -25,6 +25,26 @@ export default function Cart() {
   const [deliveryInfo, setDeliveryInfo] = useState({});
   const [paymentMethod, setPaymentMethod] = useState(null);
   const [textCopied, setTextCopied] = useState(false);
+
+  const flavourData = useStaticQuery(graphql`
+    query CartSauceFlavours {
+      allFlavour {
+        nodes {
+          apiRoute
+          name
+          outOfStock
+          localImage {
+            childImageSharp {
+              gatsbyImageData(width: 48, height: 48, layout: FIXED)
+            }
+          }
+        }
+      }
+    }
+  `);
+  const sauceFlavours = flavourData.allFlavour.nodes.filter(
+    (flavour) => flavour.apiRoute === "generic/sauce"
+  );
 
   function getAllIceCreamDiscounts() {
     function countFlavourAppearances(flavour) {
@@ -224,7 +244,7 @@ export default function Cart() {
               <section className="product-cards">
                 {cartItems.map((cartItem, index) => {
                   return (
-                    <CartItem cartItem={cartItem} key={`cart-item-${index}`} />
+                    <CartItem cartItem={cartItem} sauceFlavours={sauceFlavours} key={`cart-item-${index}`} />
                   );
                 })}
               </section>

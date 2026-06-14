@@ -31,19 +31,17 @@ export function createMessage({
           product.addOns?.sauces?.chosenSauces?.length > 0;
 
         if (hasAddOns) {
-          // Create Aderezos section
           addOnsDetails += `${INDENT}*Aderezos:*\n`;
-          if (product.addOns.rocklets.included) {
+          if (product.addOns?.rocklets?.included) {
             addOnsDetails += `${INDENT}${INDENT}- Rocklets ($${product.addOns.rocklets.price})\n`;
           }
-          if (product.addOns.sauces.chosenSauces?.length > 0) {
+          if (product.addOns?.sauces?.chosenSauces?.length > 0) {
             addOnsDetails += `${INDENT}${INDENT}*Salsas:*\n`;
             product.addOns.sauces.chosenSauces.forEach((sauce) => {
               addOnsDetails += `${INDENT}${INDENT}${INDENT}-${sauce} ($${product.addOns.sauces.price})\n`;
             });
           }
 
-          // Add line for Helado + aderezos
           addOnsDetails += `${INDENT}*${product.name} + aderezos ($${product.priceWithAddOns}*)\n`;
         }
 

@@ -156,6 +156,48 @@ export default function GlobalContextProvider({ children }) {
         cartItemsCopy.splice(indexOfProductInCart(), 1);
         return cartItemsCopy;
       }
+      case "add-addon-to-item": {
+        const { productId, chosenFlavours, addOns } = action.payload;
+        return cartItemsCopy.map((item) => {
+          if (
+            item.product._id !== productId ||
+            JSON.stringify(item.product.chosenFlavours) !== JSON.stringify(chosenFlavours)
+          ) {
+            return item;
+          }
+
+          const existing = item.product.addOns || {
+            sauces: { price: 0, chosenSauces: [] },
+            rocklets: { price: 0, included: false },
+          };
+
+          const mergedSauces =
+            addOns.sauces?.chosenSauces ?? existing.sauces?.chosenSauces ?? [];
+          const mergedRocklets =
+            addOns.rocklets?.included !== undefined
+              ? addOns.rocklets.included
+              : existing.rocklets?.included || false;
+
+          const saucePrice = addOns.sauces?.price || existing.sauces?.price || 0;
+          const rockletsPrice = addOns.rocklets?.price || existing.rocklets?.price || 0;
+          const newPriceWithAddOns =
+            item.product.price +
+            mergedSauces.length * saucePrice +
+            (mergedRocklets ? rockletsPrice : 0);
+
+          return {
+            ...item,
+            product: {
+              ...item.product,
+              addOns: {
+                sauces: { price: saucePrice, chosenSauces: mergedSauces },
+                rocklets: { price: rockletsPrice, included: mergedRocklets },
+              },
+              priceWithAddOns: newPriceWithAddOns,
+            },
+          };
+        });
+      }
       case "reset": {
         return [];
       }
