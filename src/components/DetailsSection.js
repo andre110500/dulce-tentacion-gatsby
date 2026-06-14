@@ -58,7 +58,17 @@ const DetailsSection = ({
     <div className="details-section">
       <p className="details-section__title">
         {product.name}
-        <span className="details-section__price">${hasAddOns ? priceWithAddOns : product.price}</span>
+        <span className="details-section__price">
+          {hasAddOns ? (
+            <>
+              <span className="details-section__price-base">${product.price}</span>
+              <span className="details-section__price-sep">&rarr;</span>
+              ${priceWithAddOns}
+            </>
+          ) : (
+            `$${product.price}`
+          )}
+        </span>
       </p>
 
       {chosenFlavours.length > 0 && (

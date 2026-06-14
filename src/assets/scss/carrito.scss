@@ -455,6 +455,21 @@
       font-weight: 900;
       color: var(--cart-pink);
       white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    &__price-base {
+      font-weight: 700;
+      color: var(--cart-muted);
+      text-decoration: line-through;
+    }
+
+    &__price-sep {
+      font-weight: 300;
+      color: var(--cart-muted);
+      font-size: 0.75em;
     }
 
     &__label {
