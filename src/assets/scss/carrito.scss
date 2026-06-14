@@ -495,28 +495,6 @@
       }
     }
 
-    &__edit-btn {
-      background: var(--cart-pink-soft);
-      border: 2px dashed var(--cart-pink);
-      color: var(--cart-pink);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 2.6rem;
-      height: 2.6rem;
-      border-radius: 50%;
-      font-size: 0.8rem;
-      transition: background 0.2s, border-color 0.2s;
-      flex-shrink: 0;
-
-      &:hover {
-        background: var(--cart-pink);
-        color: #fff;
-        border-color: var(--cart-pink);
-      }
-    }
-
     .flavour-thumb {
       display: flex;
       align-items: center;
@@ -988,28 +966,6 @@
       padding: 0.85rem 3rem 0.85rem 0.75rem;
       font-size: 0.8rem;
 
-    &__edit-btn {
-      background: var(--cart-pink-soft);
-      border: 2px dashed var(--cart-pink);
-      color: var(--cart-pink);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 2.6rem;
-      height: 2.6rem;
-      border-radius: 50%;
-      font-size: 0.8rem;
-      transition: background 0.2s, border-color 0.2s;
-      flex-shrink: 0;
-
-      &:hover {
-        background: var(--cart-pink);
-        color: #fff;
-        border-color: var(--cart-pink);
-      }
-    }
-
     .flavour-thumb {
         &__image {
           flex-basis: 2.2rem;
@@ -1021,12 +977,6 @@
           font-size: 0.72rem;
         }
       }
-    }
-
-    .details-section__edit-btn {
-      width: 2.2rem;
-      height: 2.2rem;
-      font-size: 0.7rem;
     }
 
     .empty {
