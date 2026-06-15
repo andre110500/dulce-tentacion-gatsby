@@ -514,10 +514,17 @@ function ProductImage({ product, image }) {
 
 function ProductDetailModal({ product, image, dispatch, onClose }) {
   const [quantity, setQuantity] = useState(1);
+  const modalRef = useRef(null);
+  const [bottomPadding, setBottomPadding] = useState(null);
   const productName = cleanProductName(product.name);
   const hasOptions = Boolean(product.apiRoute);
 
   useEffect(() => {
+    const nav = document.querySelector(".mobile-shop-nav");
+    if (nav) {
+      setBottomPadding(nav.offsetHeight);
+    }
+
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
         onClose();
@@ -554,6 +561,8 @@ function ProductDetailModal({ product, image, dispatch, onClose }) {
       className="product-modal"
       role="dialog"
       aria-modal="true"
+      ref={modalRef}
+      style={bottomPadding != null ? { paddingBottom: bottomPadding } : undefined}
       aria-labelledby={`product-modal-${product._id}`}
     >
       <button
