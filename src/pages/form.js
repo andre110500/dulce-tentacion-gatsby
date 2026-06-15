@@ -195,14 +195,15 @@ export default function IceCreamForm({ data, location }) {
                     >
                       <span>{flavour.name}</span>
                       <div>
-                        <input
-                          id={`${namePrefix}-${flavour.name}`}
-                          type="checkbox"
-                          disabled={isDisabled}
-                          name={`${namePrefix}-flavour`}
-                          value={flavour.name}
-                          onChange={handleChange}
-                        />
+<input
+  id={`${namePrefix}-${flavour.name}`}
+  type="checkbox"
+  checked={isSelected}
+  disabled={isDisabled}
+  name={`${namePrefix}-flavour`}
+  value={flavour.name}
+  onChange={handleChange}
+/>
                         {isSelected && (
                           <FaCheck className="check-icon" aria-hidden="true" />
                         )}
