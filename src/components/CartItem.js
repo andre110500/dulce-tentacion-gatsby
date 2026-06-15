@@ -81,29 +81,45 @@ export default function CartItem({ cartItem, sauceFlavours, allFlavours }) {
 
   return (
     <div className="product-card cart-product-card">
-      <button
-        className="remove"
-        type="button"
-        aria-label={`Quitar ${product.name} del carrito`}
-        onClick={() =>
-          dispatch({
-            type: "remove-stack",
-            payload: { product: product },
-          })
-        }
-      >
-        <FaTrashAlt aria-hidden="true" />
-      </button>
       <div className="image-container">
-        {image ? (
-          <GatsbyImage image={image} alt={product.name} />
-        ) : product.imgUrl ? (
-          <img src={product.imgUrl} alt={product.name} />
-        ) : (
-          <div className="image-placeholder" aria-hidden="true">
-            DT
-          </div>
-        )}
+        <div className="cart-card-actions">
+          <button
+            className="edit-btn"
+            type="button"
+            aria-label={`Editar ${product.name}`}
+            onClick={() =>
+              navigate(`/form?id=${product._id}`, { state: { editingItem: product } })
+            }
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+            </svg>
+          </button>
+          <button
+            className="remove"
+            type="button"
+            aria-label={`Quitar ${product.name} del carrito`}
+            onClick={() =>
+              dispatch({
+                type: "remove-stack",
+                payload: { product: product },
+              })
+            }
+          >
+            <FaTrashAlt aria-hidden="true" />
+          </button>
+        </div>
+        <div className="image-content">
+          {image ? (
+            <GatsbyImage image={image} alt={product.name} />
+          ) : product.imgUrl ? (
+            <img src={product.imgUrl} alt={product.name} />
+          ) : (
+            <div className="image-placeholder" aria-hidden="true">
+              DT
+            </div>
+          )}
+        </div>
       </div>
       {!product.chosenFlavours && (
         <>
@@ -183,9 +199,6 @@ export default function CartItem({ cartItem, sauceFlavours, allFlavours }) {
           }}
           chosenFlavours={product.chosenFlavours}
           flavourMap={flavourMap}
-          onChangeFlavours={() =>
-            navigate(`/form?id=${product._id}`, { state: { editingItem: product } })
-          }
         />
       )}
       {product.chosenFlavours && (
