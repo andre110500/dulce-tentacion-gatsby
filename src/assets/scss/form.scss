@@ -475,209 +475,22 @@
     border-radius: 0.5rem;
     background: #ffffff;
     box-shadow: none;
-    color: var(--form-ink);
+    --ds-ink: var(--form-ink);
+    --ds-accent: var(--form-pink);
+    --ds-accent-dark: var(--form-pink-dark);
+    --ds-accent-soft: var(--form-pink-soft);
+    --ds-muted: var(--form-muted);
+    --ds-border: var(--form-border);
+    color: var(--ds-ink);
     font-size: 0.95rem;
     line-height: 1.45;
 
-    &__title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      margin: 0;
-      font-size: 1rem;
-      font-weight: 850;
-    }
-
-    &__price {
-      color: var(--form-pink);
-      font-weight: 900;
-      white-space: nowrap;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-
-    &__price-base {
-      font-weight: 700;
-      color: var(--form-muted);
-      text-decoration: line-through;
-    }
-
-    &__price-sep {
-      font-weight: 300;
-      color: var(--form-muted);
-      font-size: 0.75em;
-    }
-
-    &__label {
-      display: block;
-      margin: 0;
-      color: var(--form-pink-dark);
-      font-size: 0.75rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0;
-    }
-
-    .flavours-row {
-      display: grid;
-      gap: 0.35rem;
-      margin-top: 0.5rem;
-
-      &__list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
-    }
-
-    &__change-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.4rem 0.75rem;
-      border-radius: 99rem;
-      background: var(--form-pink-soft);
-      color: var(--form-pink);
-      font-size: 0.78rem;
-      font-weight: 700;
-      box-shadow: none;
-      justify-self: start;
-    }
+    @import "details-section";
 
     .flavour-thumb {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-
-      &__image {
-        flex: 0 0 2.8rem;
-        width: 2.8rem;
-        height: 2.8rem;
-        border-radius: 50%;
-        overflow: hidden;
-        border: 2px solid #ffffff;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-
-        .gatsby-image-wrapper {
-          width: 100%;
-          height: 100%;
-        }
-
-        img {
-          display: block;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-      }
-
-      &--fallback {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        background: var(--form-pink-soft);
-        border: 2px solid var(--form-pink);
-
-        span {
-          font-size: 1rem;
-          font-weight: 900;
-          color: var(--form-pink);
-        }
-      }
-
-      &__label {
-        font-size: 0.85rem;
-        font-weight: 700;
-        line-height: 1.2;
-        white-space: nowrap;
-      }
-    }
-
-    .aderezos-section {
-      display: grid;
-      gap: 0.35rem;
-      margin-top: 0.75rem;
-      padding-top: 0.65rem;
-      border-top: 1px solid var(--form-border);
-
-      &--empty {
-        margin-top: 0;
-        padding-top: 0;
-        border-top: none;
-      }
-    }
-
-    .aderezos-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .sauce-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.3rem 0.65rem 0.3rem 0.4rem;
-      border-radius: 99rem;
-      background: var(--form-pink-soft);
-      font-size: 0.85rem;
-      font-weight: 700;
-      animation: badgeIn 0.25s ease both;
-
-      .sauce-swatch {
-        position: relative;
-        display: block;
-        width: 1.3rem;
-        height: 1.3rem;
-        flex: 0 0 1.3rem;
-        border: 1.5px solid #ffffff;
-        border-radius: 50%;
-        box-shadow: inset 0 0.2rem 0.3rem rgba(255, 255, 255, 0.28);
-
-        &::after {
-          display: none;
-        }
-      }
-
-      &__price {
-        color: var(--form-muted);
-        font-weight: 900;
-      }
-    }
-
-    .rocklets-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.3rem 0.65rem;
-      border-radius: 99rem;
-      background: #fff3e0;
-      font-size: 0.85rem;
-      font-weight: 700;
-      animation: badgeIn 0.25s ease both;
-
-      &__icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 1.1rem;
-        height: 1.1rem;
-        flex: 0 0 1.1rem;
-
-        svg {
-          display: block;
-        }
-      }
-
-      &__price {
-        color: var(--form-muted);
-        font-weight: 900;
-      }
+      --thumb-accent: var(--ds-accent);
+      --thumb-accent-soft: var(--ds-accent-soft);
+      @import "flavour-thumb";
     }
   }
 

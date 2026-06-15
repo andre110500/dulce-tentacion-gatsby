@@ -116,7 +116,7 @@
   .remove {
     position: absolute;
     top: 0.7rem;
-    right: 0.7rem;
+    left: 0.7rem;
     z-index: 2;
     width: 2.15rem;
     height: 2.15rem;
@@ -438,207 +438,23 @@
     grid-column: 2;
     display: grid;
     gap: 0.65rem;
-    padding: 1rem 3.2rem 1rem 1rem;
-    color: var(--cart-ink);
+     
+    --ds-ink: var(--cart-ink);
+    --ds-accent: var(--cart-pink);
+    --ds-accent-dark: var(--cart-pink-dark);
+    --ds-accent-soft: var(--cart-pink-soft);
+    --ds-muted: var(--cart-muted);
+    --ds-border: var(--cart-border);
+    color: var(--ds-ink);
     font-size: 0.86rem;
     line-height: 1.35;
 
-    &__title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      margin: 0;
-      font-size: 0.92rem;
-      font-weight: 850;
-    }
-
-    &__price {
-      font-weight: 900;
-      color: var(--cart-pink);
-      white-space: nowrap;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-
-    &__price-base {
-      font-weight: 700;
-      color: var(--cart-muted);
-      text-decoration: line-through;
-    }
-
-    &__price-sep {
-      font-weight: 300;
-      color: var(--cart-muted);
-      font-size: 0.75em;
-    }
-
-    &__label {
-      display: block;
-      margin: 0;
-      color: var(--cart-pink-dark);
-      font-size: 0.7rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0;
-    }
-
-    .flavours-row {
-      display: grid;
-      gap: 0.35rem;
-
-      &__list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
-    }
-
-    &__change-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.4rem 0.75rem;
-      border-radius: 99rem;
-      background: var(--cart-pink-soft);
-      color: var(--cart-pink);
-      font-size: 0.78rem;
-      font-weight: 700;
-      box-shadow: none;
-      justify-self: start;
-    }
+    @import "details-section";
 
     .flavour-thumb {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-
-      &__image {
-        flex: 0 0 2.6rem;
-        width: 2.6rem;
-        height: 2.6rem;
-        border-radius: 50%;
-        overflow: hidden;
-        border: 2px solid #ffffff;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-
-        .gatsby-image-wrapper {
-          width: 100%;
-          height: 100%;
-        }
-
-        img {
-          display: block;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-      }
-
-      &--fallback {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        background: var(--cart-pink-soft);
-        border: 2px solid var(--cart-pink);
-
-        span {
-          font-size: 0.9rem;
-          font-weight: 900;
-          color: var(--cart-pink);
-        }
-      }
-
-      &__label {
-        font-size: 0.78rem;
-        font-weight: 700;
-        line-height: 1.2;
-        white-space: nowrap;
-      }
-    }
-
-    .aderezos-section {
-      display: grid;
-      gap: 0.35rem;
-      padding-top: 0.55rem;
-      border-top: 1px solid var(--cart-border);
-
-      &--empty {
-        padding-top: 0;
-        border-top: none;
-      }
-    }
-
-    .aderezos-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
-
-    .sauce-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.25rem 0.6rem 0.25rem 0.35rem;
-      border-radius: 99rem;
-      background: var(--cart-pink-soft);
-      font-size: 0.78rem;
-      font-weight: 700;
-      animation: badgeIn 0.25s ease both;
-
-      .sauce-swatch {
-        position: relative;
-        display: block;
-        width: 1.2rem;
-        height: 1.2rem;
-        flex: 0 0 1.2rem;
-        border: 1.5px solid #ffffff;
-        border-radius: 50%;
-        box-shadow: inset 0 0.2rem 0.3rem rgba(255, 255, 255, 0.28);
-
-        &::after {
-          display: none;
-        }
-      }
-
-      &__price {
-        color: var(--cart-muted);
-        font-weight: 900;
-      }
-    }
-
-    .rocklets-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      padding: 0.25rem 0.6rem;
-      border-radius: 99rem;
-      background: #fff3e0;
-      font-size: 0.78rem;
-      font-weight: 700;
-      animation: badgeIn 0.25s ease both;
-
-      &__icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 1rem;
-        height: 1rem;
-        flex: 0 0 1rem;
-
-        svg {
-          display: block;
-        }
-      }
-
-      &__price {
-        color: var(--cart-muted);
-        font-weight: 900;
-      }
+      --thumb-accent: var(--ds-accent);
+      --thumb-accent-soft: var(--ds-accent-soft);
+      @import "flavour-thumb";
     }
   }
 
@@ -977,7 +793,7 @@
     }
 
     .details-section {
-      padding: 0.85rem 3rem 0.85rem 0.75rem;
+     
       font-size: 0.8rem;
 
     &__change-btn {
@@ -986,15 +802,7 @@
     }
 
     .flavour-thumb {
-        &__image {
-          flex-basis: 2.2rem;
-          width: 2.2rem;
-          height: 2.2rem;
-        }
-
-        &__label {
-          font-size: 0.72rem;
-        }
+      @import "flavour-thumb";
       }
     }
 
