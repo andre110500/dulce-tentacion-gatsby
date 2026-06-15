@@ -445,17 +445,14 @@
     --ds-accent-soft: var(--cart-pink-soft);
     --ds-muted: var(--cart-muted);
     --ds-border: var(--cart-border);
+    --thumb-accent: var(--ds-accent);
+    --thumb-accent-soft: var(--ds-accent-soft);
     color: var(--ds-ink);
     font-size: 0.86rem;
     line-height: 1.35;
 
     @import "details-section";
-
-    .flavour-thumb {
-      --thumb-accent: var(--ds-accent);
-      --thumb-accent-soft: var(--ds-accent-soft);
-      @import "flavour-thumb";
-    }
+    @import "flavour-thumb";
   }
 
   #checkout-form {
@@ -793,16 +790,11 @@
     }
 
     .details-section {
-     
       font-size: 0.8rem;
 
-    &__change-btn {
-      font-size: 0.72rem;
-      padding: 0.3rem 0.6rem;
-    }
-
-    .flavour-thumb {
-      @import "flavour-thumb";
+      &__change-btn {
+        font-size: 0.72rem;
+        padding: 0.3rem 0.6rem;
       }
     }
 

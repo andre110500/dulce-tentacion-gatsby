@@ -481,17 +481,14 @@
     --ds-accent-soft: var(--form-pink-soft);
     --ds-muted: var(--form-muted);
     --ds-border: var(--form-border);
+    --thumb-accent: var(--ds-accent);
+    --thumb-accent-soft: var(--ds-accent-soft);
     color: var(--ds-ink);
     font-size: 0.95rem;
     line-height: 1.45;
 
     @import "details-section";
-
-    .flavour-thumb {
-      --thumb-accent: var(--ds-accent);
-      --thumb-accent-soft: var(--ds-accent-soft);
-      @import "flavour-thumb";
-    }
+    @import "flavour-thumb";
   }
 
   .sauce-swatch--chocolate {
