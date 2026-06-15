@@ -543,14 +543,8 @@
 
     button[name="go to cart"] {
       background: linear-gradient(135deg, #ff5b94, var(--form-pink));
-      color: transparent;
-      font-size: 0;
-
-      &::before {
-        content: "Comprar ahora";
-        color: #ffffff;
-        font-size: 0.95rem;
-      }
+      color: #ffffff;
+      font-size: 0.95rem;
     }
 
     button[name="go to catalog"] {

@@ -18,9 +18,10 @@ export default function IceCreamForm({ data, location }) {
   const { dispatch } = useContext(GlobalContext);
   const allParams = new URLSearchParams(location.search);
   const productIdParam = allParams.get("id");
+  const editParam = allParams.get("edit");
   const products = data.allProduct.edges;
   const allFlavours = data.allFlavour.nodes;
-  const editingItem = location.state?.editingItem;
+  const editingItem = editParam ? JSON.parse(decodeURIComponent(editParam)) : null;
   const [rockletsChecked, setRockletsChecked] = useState(
     editingItem?.addOns?.rocklets?.included || false
   );
@@ -30,8 +31,9 @@ export default function IceCreamForm({ data, location }) {
   const [sauceMenuChosenFlavours, setSauceMenuChosenFlavours] = useState(
     editingItem?.addOns?.sauces?.chosenSauces || []
   );
+
   if (!productIdParam) {
-    return <p>Page not found</p>; // Or redirect to a 404 page
+    return <p>Page not found</p>;
   }
 
   const product = products.find((product) => {
