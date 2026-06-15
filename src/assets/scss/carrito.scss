@@ -115,6 +115,7 @@
 
   .cart-card-actions {
     display: flex;
+    flex-direction: column;
     gap: 0.4rem;
     margin-bottom: 0.25rem;width: auto;
     justify-content: space-evenly;

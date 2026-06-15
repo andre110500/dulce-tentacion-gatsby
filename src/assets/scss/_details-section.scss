@@ -71,8 +71,7 @@
   border-top: 1px solid var(--ds-border);
 
   &--empty {
-    padding-top: 0;
-    border-top: none;
+    display: none;
   }
 }
 
