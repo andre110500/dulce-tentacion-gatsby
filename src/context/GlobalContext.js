@@ -26,8 +26,35 @@ export function triggerAlert(message) {
   });
 }
 
+function loadCartFromStorage() {
+  try {
+    const saved = localStorage.getItem("cartItems");
+    if (saved) {
+      const items = JSON.parse(saved);
+      return items.map((item) => ({
+        ...item,
+        getTotalCartItemPrice() {
+          if (this.product.priceWithAddOns) {
+            return this.product.priceWithAddOns * this.count;
+          }
+          return this.product.price * this.count;
+        },
+      }));
+    }
+  } catch (e) {}
+  return [];
+}
+
 export default function GlobalContextProvider({ children }) {
-  const [cartItems, dispatch] = useReducer(reducer, []);
+  const [cartItems, dispatch] = useReducer(reducer, null, () =>
+    loadCartFromStorage()
+  );
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    } catch (e) {}
+  }, [cartItems]);
 
   const ACTIONS = {
     ADD_CART_ITEM: "add-cart-item",
