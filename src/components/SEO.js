@@ -26,6 +26,7 @@ const SEO = ({ title, description, image, url }) => {
     <Helmet>
       {/* General Metadata */}
       <title>{metaTitle}</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta name="description" content={metaDescription} />
 
       {/* Open Graph / Facebook */}

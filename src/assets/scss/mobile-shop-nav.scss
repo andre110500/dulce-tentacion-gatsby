@@ -9,12 +9,14 @@
     --mobile-shop-nav-reserved-space: calc(var(--mobile-shop-nav-height) + 0.55rem);
   }
 
-  body.mobile-shop-nav-active {
+  body.mobile-shop-nav-active,
+  body.form-sticky-actions-active {
     height: 100%;
     overflow: hidden;
   }
 
-  body.mobile-shop-nav-active #gatsby-focus-wrapper {
+  body.mobile-shop-nav-active #gatsby-focus-wrapper,
+  body.form-sticky-actions-active #gatsby-focus-wrapper {
     position: fixed;
     inset: 0;
     overflow-x: hidden;

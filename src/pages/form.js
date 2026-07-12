@@ -1,6 +1,5 @@
 import "../assets/scss/form.scss";
-import { useState } from "react";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { GlobalContext } from "../context/GlobalContext";
 import React from "react";
@@ -31,6 +30,14 @@ export default function IceCreamForm({ data, location }) {
   const [sauceMenuChosenFlavours, setSauceMenuChosenFlavours] = useState(
     editingItem?.addOns?.sauces?.chosenSauces || []
   );
+
+  useEffect(() => {
+    document.body.classList.add("form-sticky-actions-active");
+
+    return () => {
+      document.body.classList.remove("form-sticky-actions-active");
+    };
+  }, []);
 
   if (!productIdParam) {
     return <p>Page not found</p>;

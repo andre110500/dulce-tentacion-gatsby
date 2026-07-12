@@ -509,7 +509,7 @@
 
   .buttons-container {
     position: sticky;
-    bottom: 0.75rem;
+    bottom: 0.35rem;
     z-index: 3;
     display: grid;
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
@@ -556,7 +556,8 @@
 
 @media (max-width: 720px) {
   #ice-cream-list {
-    padding: 0.75rem 0.65rem 6rem;
+    --form-buttons-reserved-space: 8.9rem;
+    padding: 0.75rem 0.65rem var(--form-buttons-reserved-space);
 
     .form-hero {
       grid-template-columns: 1fr;
@@ -626,8 +627,13 @@
     }
 
     .buttons-container {
+      position: fixed;
+      right: auto;
+      left: 50%;
+      width: min(calc(100% - 1.3rem), 58rem);
       grid-template-columns: 1fr;
-      bottom: calc(0.65rem + env(safe-area-inset-bottom));
+      bottom: 1rem;
+      transform: translateX(-50%);
     }
 
     .rocklets-card {
@@ -648,6 +654,23 @@
       &.selected::before {
         transform: translateX(2.08rem);
       }
+    }
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  #ice-cream-list {
+    --form-buttons-reserved-space: 8.9rem;
+    padding-bottom: var(--form-buttons-reserved-space);
+
+    .buttons-container {
+      position: fixed;
+      right: auto;
+      bottom: 1rem;
+      left: 50%;
+      width: min(calc(100% - 1.3rem), 58rem);
+      grid-template-columns: 1fr;
+      transform: translateX(-50%);
     }
   }
 }
