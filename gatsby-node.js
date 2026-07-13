@@ -1,6 +1,4 @@
 const crypto = require("crypto");
-const fs = require("fs");
-const path = require("path");
 require("dotenv").config();
 
 exports.sourceNodes = async ({ actions }) => {
@@ -130,8 +128,3 @@ exports.sourceNodes = async ({ actions }) => {
   return;
 };
 
-exports.onPostBuild = () => {
-  const src = path.join(__dirname, "src", "images", "brand", "logo.png");
-  const dest = path.join(__dirname, "public", "meta-image.png");
-  fs.copyFileSync(src, dest);
-};

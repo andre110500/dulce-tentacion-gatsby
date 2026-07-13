@@ -20,7 +20,9 @@ const SEO = ({ title, description, image, url }) => {
   const metaDescription = description || site.siteMetadata.description;
   const metaUrl = url || `${site.siteMetadata.siteUrl}${location.pathname}`;
   const metaImage = image || site.siteMetadata.image; // Use passed image or default
-  const metaImageUrl = `${site.siteMetadata.siteUrl}${metaImage}`; // Complete URL for Open Graph
+  const metaImageUrl = metaImage.startsWith("http")
+    ? metaImage
+    : `${site.siteMetadata.siteUrl}${metaImage}`; // Complete URL for Open Graph
 
   return (
     <Helmet>
@@ -35,6 +37,10 @@ const SEO = ({ title, description, image, url }) => {
       <meta property="og:description" content={metaDescription} />
       <meta property="og:url" content={metaUrl} />
       <meta property="og:image" content={metaImageUrl} />
+      <meta property="og:image:secure_url" content={metaImageUrl} />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       {/* WhatsApp uses Open Graph, so these should work */}
 
       {/* Twitter Card */}
