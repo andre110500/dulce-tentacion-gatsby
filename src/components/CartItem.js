@@ -206,23 +206,53 @@ export default function CartItem({ cartItem, sauceFlavours, allFlavours }) {
           }}
           chosenFlavours={product.chosenFlavours}
           flavourMap={flavourMap}
+          onRemoveAddon={(addonKey) => handleToggleAddon(dispatch, product, addonKey)}
+          onRemoveSauce={
+            currentSauces.length > 0
+              ? () =>
+                  dispatch({
+                    type: "add-addon-to-item",
+                    payload: {
+                      productId: product._id,
+                      chosenFlavours: product.chosenFlavours,
+                      addOns: {
+                        sauces: {
+                          price: saucePrice,
+                          chosenSauces: [],
+                        },
+                      },
+                    },
+                  })
+              : undefined
+          }
         />
       )}
       {product.chosenFlavours && (
         <div className="cart-addon-buttons">
-          <button type="button" className="addon-btn" onClick={() => setShowSauceSelector((v) => !v)}>
-            {currentSauces.length > 0 ? <FaMinus aria-hidden="true" /> : <FaPlus aria-hidden="true" />} salsa
-          </button>
-          {Object.entries(product.addOns?.toggleAddons || {}).map(([key, addon]) => (
+          {currentSauces.length === 0 && (
             <button
               type="button"
               className="addon-btn"
-              key={key}
-              onClick={() => handleToggleAddon(dispatch, product, key)}
+              onClick={() => {
+                setShowSauceSelector((v) => !v);
+              }}
             >
-              {addon.included ? <FaMinus aria-hidden="true" /> : <FaPlus aria-hidden="true" />} {addon.name?.toLowerCase() || key}
+              <FaPlus aria-hidden="true" /> salsa
             </button>
-          ))}
+          )}
+          {Object.entries(product.addOns?.toggleAddons || {})
+            .filter(([, addon]) => !addon.included)
+            .map(([key, addon]) => (
+              <button
+                type="button"
+                className="addon-btn"
+                key={key}
+                onClick={() => handleToggleAddon(dispatch, product, key)}
+              >
+                <FaPlus aria-hidden="true" /> {addon.name?.toLowerCase() || key}
+              </button>
+            ))
+          }
         </div>
       )}
       <AnimatePresence>

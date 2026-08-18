@@ -2,7 +2,10 @@ import React from "react";
 import { GatsbyImage, getImage } from "gatsby-plugin-image";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { FaTimes } from "react-icons/fa";
+
 import RockletsIcon from "./RockletsIcon";
+import WhiteChocolateDropsIcon from "./WhiteChocolateDropsIcon";
 
 function FlavourThumb({ flavour, flavourMap }) {
   const data = flavourMap[flavour.toLowerCase()];
@@ -30,7 +33,7 @@ function FlavourThumb({ flavour, flavourMap }) {
   );
 }
 
-function SauceBadge({ sauce, price }) {
+function SauceBadge({ sauce, price, onRemove }) {
   const sauceClass = sauce
     .toLowerCase()
     .normalize("NFD")
@@ -38,10 +41,20 @@ function SauceBadge({ sauce, price }) {
     .replace(/\s+/g, "-");
 
   return (
-    <span className="sauce-badge">
+    <span
+      className={`sauce-badge${onRemove ? " sauce-badge--removable" : ""}`}
+      onClick={onRemove}
+      role={onRemove ? "button" : undefined}
+      tabIndex={onRemove ? 0 : undefined}
+    >
       <span className={`sauce-swatch sauce-swatch--${sauceClass}`} />
       <span>Salsa de {sauce}</span>
       {price != null && <span className="sauce-badge__price">${price}</span>}
+      {onRemove && (
+        <span className="sauce-badge__remove">
+          <FaTimes size={10} />
+        </span>
+      )}
     </span>
   );
 }
@@ -54,6 +67,8 @@ const DetailsSection = ({
   chosenFlavours = [],
   flavourMap = {},
   onChangeFlavours,
+  onRemoveAddon,
+  onRemoveSauce,
 }) => {
   const hasAddOns =
     sauces.chosenSauces?.length > 0 ||
@@ -101,7 +116,7 @@ const DetailsSection = ({
                   transition={{ duration: 0.35 }}
                   style={{ display: "inline-flex" }}
                 >
-                  <SauceBadge sauce={s} price={sauces.price} />
+                  <SauceBadge sauce={s} price={sauces.price} onRemove={onRemoveSauce ? () => onRemoveSauce() : undefined} />
                 </motion.span>
               ))}
             {Object.entries(toggleAddons).map(([key, addon]) => (
@@ -114,14 +129,29 @@ const DetailsSection = ({
                   transition={{ duration: 0.35 }}
                   style={{ display: "inline-flex" }}
                 >
-                  <span className="addon-badge">
+                  <span
+                    className={`addon-badge${onRemoveAddon ? " addon-badge--removable" : ""}`}
+                    onClick={onRemoveAddon ? () => onRemoveAddon(key) : undefined}
+                    role={onRemoveAddon ? "button" : undefined}
+                    tabIndex={onRemoveAddon ? 0 : undefined}
+                  >
                     {key === "rocklets" && (
                       <span className="addon-badge__icon">
                         <RockletsIcon size={16} />
                       </span>
                     )}
+                    {key === "gotas de chocolate blanco" && (
+                      <span className="addon-badge__icon">
+                        <WhiteChocolateDropsIcon size={16} />
+                      </span>
+                    )}
                     <span>{addon.name}</span>
                     <span className="addon-badge__price">${addon.price}</span>
+                    {onRemoveAddon && (
+                      <span className="addon-badge__remove">
+                        <FaTimes size={10} />
+                      </span>
+                    )}
                   </span>
                 </motion.span>
               )

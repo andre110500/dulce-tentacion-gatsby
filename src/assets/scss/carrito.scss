@@ -297,6 +297,8 @@
     padding: 0 1rem 0.75rem;
 
     .addon-btn {
+      position: relative;
+      z-index: 2;
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;

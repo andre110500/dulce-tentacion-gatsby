@@ -111,6 +111,28 @@
     color: var(--ds-muted);
     font-weight: 900;
   }
+
+  &--removable {
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: #ffe0cc;
+    }
+  }
+
+  &__remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-left: 0.15rem;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.1);
+    color: var(--ds-accent);
+    flex: 0 0 1.15rem;
+  }
 }
 
 .addon-badge {
@@ -124,6 +146,15 @@
   font-weight: 700;
   animation: badgeIn 0.25s ease both;
 
+  &--removable {
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: #ffe0cc;
+    }
+  }
+
   &__icon {
     display: flex;
     align-items: center;
@@ -136,5 +167,18 @@
   &__price {
     font-weight: 900;
     color: #e65100;
+  }
+
+  &__remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-left: 0.15rem;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.1);
+    color: #e65100;
+    flex: 0 0 1.15rem;
   }
 }

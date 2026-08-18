@@ -556,7 +556,7 @@
 
 @media (max-width: 720px) {
   #ice-cream-list {
-    --form-buttons-reserved-space: 8.9rem;
+    --form-buttons-reserved-space: 5rem;
     padding: 0.75rem 0.65rem var(--form-buttons-reserved-space);
 
     .form-hero {
@@ -627,13 +627,13 @@
     }
 
     .buttons-container {
-      position: fixed;
+      position: sticky;
       right: auto;
-      left: 50%;
-      width: min(calc(100% - 1.3rem), 58rem);
+      left: auto;
+      width: auto;
       grid-template-columns: 1fr;
       bottom: 1rem;
-      transform: translateX(-50%);
+      transform: none;
     }
 
     .addon-card {
@@ -660,17 +660,17 @@
 
 @media (hover: none) and (pointer: coarse) {
   #ice-cream-list {
-    --form-buttons-reserved-space: 8.9rem;
+    --form-buttons-reserved-space: 5rem;
     padding-bottom: var(--form-buttons-reserved-space);
 
     .buttons-container {
-      position: fixed;
+      position: sticky;
       right: auto;
       bottom: 1rem;
-      left: 50%;
-      width: min(calc(100% - 1.3rem), 58rem);
+      left: auto;
+      width: auto;
       grid-template-columns: 1fr;
-      transform: translateX(-50%);
+      transform: none;
     }
   }
 }
