@@ -34,7 +34,7 @@
 
   .form-hero,
   .choice-section,
-  .rocklets-section,
+  .addon-section,
   .order-summary {
     border: 1px solid var(--form-border);
     border-radius: 0.5rem;
@@ -43,7 +43,7 @@
   }
 
   .form-hero,
-  .rocklets-section,
+  .addon-section,
   .order-summary {
     overflow: hidden;
   }
@@ -368,11 +368,11 @@
     }
   }
 
-  .rocklets-section > .addon-toggle {
+  .addon-section > .addon-toggle {
     display: none;
   }
 
-  .rocklets-card {
+  .addon-card {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
@@ -384,7 +384,7 @@
     background: #ffffff;
   }
 
-  .rocklets-card__image {
+  .addon-card__image {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -406,7 +406,7 @@
     }
   }
 
-  .rocklets-card__content {
+  .addon-card__content {
     display: grid;
     gap: 0.2rem;
     min-width: 0;
@@ -424,7 +424,7 @@
     }
   }
 
-  .rocklets-toggle {
+  .addon-toggle-btn {
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -636,12 +636,12 @@
       transform: translateX(-50%);
     }
 
-    .rocklets-card {
+    .addon-card {
       gap: 0.7rem;
       padding: 0.75rem;
     }
 
-    .rocklets-toggle {
+    .addon-toggle-btn {
       width: 4.25rem;
       min-height: 2.15rem;
       padding-inline: 0.54rem;

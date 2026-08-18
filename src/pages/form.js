@@ -21,9 +21,19 @@ export default function IceCreamForm({ data, location }) {
   const products = data.allProduct.edges;
   const allFlavours = data.allFlavour.nodes;
   const editingItem = editParam ? JSON.parse(decodeURIComponent(editParam)) : null;
-  const [rockletsChecked, setRockletsChecked] = useState(
-    editingItem?.addOns?.rocklets?.included || false
-  );
+
+  const toggleAddonsProducts = products
+    .filter((p) => p.node.type === "add-on" && !p.node.apiRoute && p.node.subType === "pot-topping")
+    .map((p) => p.node);
+
+  const [toggleAddonsState, setToggleAddonsState] = useState(() => {
+    if (!editingItem?.addOns?.toggleAddons) return {};
+    const state = {};
+    for (const [key, addon] of Object.entries(editingItem.addOns.toggleAddons)) {
+      state[key] = addon.included;
+    }
+    return state;
+  });
   const [mainMenuChosenFlavours, setMainMenuChosenFlavours] = useState(
     editingItem?.chosenFlavours || []
   );
@@ -51,15 +61,14 @@ export default function IceCreamForm({ data, location }) {
     return product.node.apiRoute === "generic/sauce";
   }).node.price;
 
-  const rockletsProduct = products.find((product) => {
-    return product.node.name.toLowerCase() === "rocklets";
-  }).node;
-  const rockletsPrice = rockletsProduct.price;
+  const toggleAddonsTotalPrice = toggleAddonsProducts.reduce((sum, addon) => {
+    return sum + (toggleAddonsState[addon.name.toLowerCase()] ? addon.price : 0);
+  }, 0);
 
   const totalPrice =
     sauceMenuChosenFlavours.length * saucePrice +
     product.price +
-    (rockletsChecked ? rockletsPrice : 0);
+    toggleAddonsTotalPrice;
 
   const flavoursOfSelectedProduct = allFlavours.filter((flavour) => {
     return flavour.apiRoute === product.apiRoute;
@@ -94,11 +103,25 @@ export default function IceCreamForm({ data, location }) {
     }
   }
 
+  function handleToggleAddon(key) {
+    setToggleAddonsState((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
     const buttonSubmitter = e.nativeEvent.submitter;
     const buttonName = buttonSubmitter.name;
     if (mainMenuChosenFlavours.length > 0) {
+      const toggleAddons = {};
+      for (const addon of toggleAddonsProducts) {
+        const key = addon.name.toLowerCase();
+        toggleAddons[key] = {
+          name: addon.name,
+          price: addon.price,
+          included: !!toggleAddonsState[key],
+        };
+      }
+
       const newProduct = {
         ...product,
         addOns: {
@@ -109,7 +132,7 @@ export default function IceCreamForm({ data, location }) {
                 ? sauceMenuChosenFlavours
                 : undefined,
           },
-          rocklets: { price: rockletsPrice, included: rockletsChecked },
+          toggleAddons,
         },
         priceWithAddOns: totalPrice,
         chosenFlavours:
@@ -295,49 +318,55 @@ export default function IceCreamForm({ data, location }) {
 
         {product.apiRoute === "generic/flavour" && (
           <>
-            <div className="rocklets-section">
-              <div className="rocklets-card">
-                <div className="rocklets-card__image">
-                  {getImage(rockletsProduct.localImage) ? (
-                    <GatsbyImage
-                      image={getImage(rockletsProduct.localImage)}
-                      alt={rockletsProduct.name}
-                    />
-                  ) : (
-                    <img src={rockletsProduct.imgUrl} alt={rockletsProduct.name} />
-                  )}
+            {toggleAddonsProducts.map((addon) => {
+              const key = addon.name.toLowerCase();
+              const isChecked = !!toggleAddonsState[key];
+              return (
+                <div className="addon-section" key={key}>
+                  <div className="addon-card">
+                    <div className="addon-card__image">
+                      {getImage(addon.localImage) ? (
+                        <GatsbyImage
+                          image={getImage(addon.localImage)}
+                          alt={addon.name}
+                        />
+                      ) : (
+                        <img src={addon.imgUrl} alt={addon.name} />
+                      )}
+                    </div>
+                    <div className="addon-card__content">
+                      <strong>{addon.name}</strong>
+                      <span>${addon.price}</span>
+                    </div>
+                    <button
+                      className={`addon-toggle-btn ${isChecked ? "selected" : ""}`}
+                      type="button"
+                      aria-pressed={isChecked}
+                      onClick={() => handleToggleAddon(key)}
+                    >
+                      <span>{isChecked ? "Sí" : "No"}</span>
+                    </button>
+                  </div>
+                  <div className="addon-toggle">
+                    <button
+                      className={isChecked ? "selected" : ""}
+                      type="button"
+                      onClick={() => setToggleAddonsState((prev) => ({ ...prev, [key]: true }))}
+                    >
+                      {isChecked && <FaCheck aria-hidden="true" />}
+                      Sí
+                    </button>
+                    <button
+                      className={!isChecked ? "selected" : ""}
+                      type="button"
+                      onClick={() => setToggleAddonsState((prev) => ({ ...prev, [key]: false }))}
+                    >
+                      No
+                    </button>
+                  </div>
                 </div>
-                <div className="rocklets-card__content">
-                  <strong>Rocklets</strong>
-                  <span>${rockletsPrice}</span>
-                </div>
-                <button
-                  className={`rocklets-toggle ${rockletsChecked ? "selected" : ""}`}
-                  type="button"
-                  aria-pressed={rockletsChecked}
-                  onClick={() => setRockletsChecked((value) => !value)}
-                >
-                  <span>{rockletsChecked ? "Sí" : "No"}</span>
-                </button>
-              </div>
-              <div className="addon-toggle">
-                <button
-                  className={rockletsChecked ? "selected" : ""}
-                  type="button"
-                  onClick={() => setRockletsChecked(true)}
-                >
-                  {rockletsChecked && <FaCheck aria-hidden="true" />}
-                  Sí
-                </button>
-                <button
-                  className={!rockletsChecked ? "selected" : ""}
-                  type="button"
-                  onClick={() => setRockletsChecked(false)}
-                >
-                  No
-                </button>
-              </div>
-            </div>
+              );
+            })}
 
             <section className="order-summary">
               <div className="choice-section__header">
@@ -348,7 +377,11 @@ export default function IceCreamForm({ data, location }) {
               </div>
               <DetailsSection
                 product={product}
-                rocklets={{ price: rockletsPrice, included: rockletsChecked }}
+                toggleAddons={toggleAddonsProducts.reduce((acc, addon) => {
+                  const key = addon.name.toLowerCase();
+                  acc[key] = { name: addon.name, price: addon.price, included: !!toggleAddonsState[key] };
+                  return acc;
+                }, {})}
                 sauces={{
                   price: saucePrice,
                   chosenSauces: sauceMenuChosenFlavours,
@@ -401,6 +434,8 @@ export const query = graphql`
           _id
           flavours
           apiRoute
+          type
+          subType
         }
       }
     }

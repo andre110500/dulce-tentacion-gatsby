@@ -33,6 +33,7 @@ function loadCartFromStorage() {
       const items = JSON.parse(saved);
       return items.map((item) => ({
         ...item,
+        product: migrateAddOns(item.product),
         getTotalCartItemPrice() {
           if (this.product.priceWithAddOns) {
             return this.product.priceWithAddOns * this.count;
@@ -43,6 +44,16 @@ function loadCartFromStorage() {
     }
   } catch (e) {}
   return [];
+}
+
+function migrateAddOns(product) {
+  if (!product?.addOns || product.addOns.toggleAddons) return product;
+  const { rocklets, gotasChocolateBlanco, ...rest } = product.addOns;
+  const toggleAddons = {};
+  if (rocklets) toggleAddons["rocklets"] = { ...rocklets, name: "Rocklets" };
+  if (gotasChocolateBlanco) toggleAddons["gotas de chocolate blanco"] = { ...gotasChocolateBlanco, name: "Gotas de chocolate blanco" };
+  if (Object.keys(toggleAddons).length === 0) return product;
+  return { ...product, addOns: { ...rest, toggleAddons } };
 }
 
 export default function GlobalContextProvider({ children }) {
@@ -220,22 +231,34 @@ export default function GlobalContextProvider({ children }) {
 
           const existing = item.product.addOns || {
             sauces: { price: 0, chosenSauces: [] },
-            rocklets: { price: 0, included: false },
+            toggleAddons: {},
           };
 
           const mergedSauces =
             addOns.sauces?.chosenSauces ?? existing.sauces?.chosenSauces ?? [];
-          const mergedRocklets =
-            addOns.rocklets?.included !== undefined
-              ? addOns.rocklets.included
-              : existing.rocklets?.included || false;
 
           const saucePrice = addOns.sauces?.price || existing.sauces?.price || 0;
-          const rockletsPrice = addOns.rocklets?.price || existing.rocklets?.price || 0;
+
+          const mergedToggleAddons = { ...existing.toggleAddons };
+          if (addOns.toggleAddons) {
+            for (const [key, addon] of Object.entries(addOns.toggleAddons)) {
+              mergedToggleAddons[key] = {
+                name: addon.name || mergedToggleAddons[key]?.name || key,
+                price: addon.price || mergedToggleAddons[key]?.price || 0,
+                included: addon.included,
+              };
+            }
+          }
+
+          let toggleAddonsTotal = 0;
+          for (const addon of Object.values(mergedToggleAddons)) {
+            if (addon.included) toggleAddonsTotal += addon.price;
+          }
+
           const newPriceWithAddOns =
             item.product.price +
             mergedSauces.length * saucePrice +
-            (mergedRocklets ? rockletsPrice : 0);
+            toggleAddonsTotal;
 
           return {
             ...item,
@@ -243,7 +266,7 @@ export default function GlobalContextProvider({ children }) {
               ...item.product,
               addOns: {
                 sauces: { price: saucePrice, chosenSauces: mergedSauces },
-                rocklets: { price: rockletsPrice, included: mergedRocklets },
+                toggleAddons: mergedToggleAddons,
               },
               priceWithAddOns: newPriceWithAddOns,
             },

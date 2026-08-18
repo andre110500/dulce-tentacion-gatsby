@@ -27,13 +27,17 @@ export function createMessage({
         let addOnsDetails = "";
         let subtotalLine = ""; // Initialize subtotal line for this item
         let hasAddOns =
-          product.addOns?.rocklets?.included ||
+          product.addOns?.toggleAddons && Object.values(product.addOns.toggleAddons).some((a) => a.included) ||
           product.addOns?.sauces?.chosenSauces?.length > 0;
 
         if (hasAddOns) {
           addOnsDetails += `${INDENT}*Aderezos:*\n`;
-          if (product.addOns?.rocklets?.included) {
-            addOnsDetails += `${INDENT}${INDENT}- Rocklets ($${product.addOns.rocklets.price})\n`;
+          if (product.addOns?.toggleAddons) {
+            for (const [, addon] of Object.entries(product.addOns.toggleAddons)) {
+              if (addon.included) {
+                addOnsDetails += `${INDENT}${INDENT}- ${addon.name} ($${addon.price})\n`;
+              }
+            }
           }
           if (product.addOns?.sauces?.chosenSauces?.length > 0) {
             addOnsDetails += `${INDENT}${INDENT}*Salsas:*\n`;

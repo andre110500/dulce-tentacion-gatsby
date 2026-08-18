@@ -9,17 +9,21 @@ import SauceSelector from "./SauceSelector";
 import { SharedCardDescription } from "./SharedCardSections";
 import { FaMinus, FaPlus, FaTrashAlt, FaIceCream } from "react-icons/fa";
 
-async function handleToggleRocklets(dispatch, product) {
-  const current = product.addOns?.rocklets?.included || false;
+async function handleToggleAddon(dispatch, product, addonKey) {
+  const addon = product.addOns?.toggleAddons?.[addonKey];
+  const current = addon?.included || false;
   dispatch({
     type: "add-addon-to-item",
     payload: {
       productId: product._id,
       chosenFlavours: product.chosenFlavours,
       addOns: {
-        rocklets: {
-          price: product.addOns?.rocklets?.price || 1500,
-          included: !current,
+        toggleAddons: {
+          [addonKey]: {
+            name: addon?.name || addonKey,
+            price: addon?.price || 0,
+            included: !current,
+          },
         },
       },
     },
@@ -194,10 +198,7 @@ export default function CartItem({ cartItem, sauceFlavours, allFlavours }) {
       {product.chosenFlavours && product.addOns && (
         <DetailsSection
           product={product}
-          rocklets={{
-            price: product.addOns.rocklets?.price || 1500,
-            included: product.addOns.rocklets?.included || false,
-          }}
+          toggleAddons={product.addOns.toggleAddons || {}}
           priceWithAddOns={product.priceWithAddOns}
           sauces={{
             price: product.addOns.sauces?.price || 500,
@@ -210,11 +211,18 @@ export default function CartItem({ cartItem, sauceFlavours, allFlavours }) {
       {product.chosenFlavours && (
         <div className="cart-addon-buttons">
           <button type="button" className="addon-btn" onClick={() => setShowSauceSelector((v) => !v)}>
-            <FaIceCream aria-hidden="true" /> {currentSauces.length > 0 ? "Cambiar salsa" : "Agregar salsa"}
+            {currentSauces.length > 0 ? <FaMinus aria-hidden="true" /> : <FaPlus aria-hidden="true" />} salsa
           </button>
-          <button type="button" className="addon-btn" onClick={() => handleToggleRocklets(dispatch, product)}>
-            <FaIceCream aria-hidden="true" /> {product.addOns?.rocklets?.included ? "Quitar rocklets" : "Agregar rocklets"}
-          </button>
+          {Object.entries(product.addOns?.toggleAddons || {}).map(([key, addon]) => (
+            <button
+              type="button"
+              className="addon-btn"
+              key={key}
+              onClick={() => handleToggleAddon(dispatch, product, key)}
+            >
+              {addon.included ? <FaMinus aria-hidden="true" /> : <FaPlus aria-hidden="true" />} {addon.name?.toLowerCase() || key}
+            </button>
+          ))}
         </div>
       )}
       <AnimatePresence>

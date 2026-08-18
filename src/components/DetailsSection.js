@@ -48,14 +48,16 @@ function SauceBadge({ sauce, price }) {
 
 const DetailsSection = ({
   product,
-  rocklets,
+  toggleAddons = {},
   sauces,
   priceWithAddOns,
   chosenFlavours = [],
   flavourMap = {},
   onChangeFlavours,
 }) => {
-  const hasAddOns = sauces.chosenSauces?.length > 0 || rocklets.included;
+  const hasAddOns =
+    sauces.chosenSauces?.length > 0 ||
+    Object.values(toggleAddons).some((a) => a.included);
 
   return (
     <div className="details-section">
@@ -102,24 +104,28 @@ const DetailsSection = ({
                   <SauceBadge sauce={s} price={sauces.price} />
                 </motion.span>
               ))}
-            {rocklets.included && (
-              <motion.span
-                key="rocklets"
-                initial={{ opacity: 0, scale: 0.85 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.85 }}
-                transition={{ duration: 0.35 }}
-                style={{ display: "inline-flex" }}
-              >
-                <span className="rocklets-badge">
-                  <span className="rocklets-badge__icon">
-                    <RockletsIcon size={16} />
+            {Object.entries(toggleAddons).map(([key, addon]) => (
+              addon.included && (
+                <motion.span
+                  key={key}
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.85 }}
+                  transition={{ duration: 0.35 }}
+                  style={{ display: "inline-flex" }}
+                >
+                  <span className="rocklets-badge">
+                    {key === "rocklets" && (
+                      <span className="rocklets-badge__icon">
+                        <RockletsIcon size={16} />
+                      </span>
+                    )}
+                    <span>{addon.name}</span>
+                    <span className="rocklets-badge__price">${addon.price}</span>
                   </span>
-                  <span>Rocklets</span>
-                  <span className="rocklets-badge__price">${rocklets.price}</span>
-                </span>
-              </motion.span>
-            )}
+                </motion.span>
+              )
+            ))}
           </AnimatePresence>
         </div>
       </div>
