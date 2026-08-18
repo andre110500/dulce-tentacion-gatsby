@@ -114,14 +114,14 @@ const DetailsSection = ({
                   transition={{ duration: 0.35 }}
                   style={{ display: "inline-flex" }}
                 >
-                  <span className="rocklets-badge">
+                  <span className="addon-badge">
                     {key === "rocklets" && (
-                      <span className="rocklets-badge__icon">
+                      <span className="addon-badge__icon">
                         <RockletsIcon size={16} />
                       </span>
                     )}
                     <span>{addon.name}</span>
-                    <span className="rocklets-badge__price">${addon.price}</span>
+                    <span className="addon-badge__price">${addon.price}</span>
                   </span>
                 </motion.span>
               )
