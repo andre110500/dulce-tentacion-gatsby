@@ -163,13 +163,14 @@ export default function Cart() {
 
       try {
         // Race between the fetch and the timeout
+        const formData = new FormData();
+        formData.append("access_key", "8df3012b-2cf0-4553-ad88-6c31eaef515c");
+        formData.append("message", createMessage(messageData));
+
         const response = await Promise.race([
-          fetch("https://submit-form.com/L6kPWEs29", {
+          fetch("https://api.web3forms.com/submit", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ message: createMessage(messageData) }),
+            body: formData,
           }),
           timeoutPromise,
         ]);
