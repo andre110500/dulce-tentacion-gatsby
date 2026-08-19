@@ -62,7 +62,7 @@ export default function IceCreamForm({ data, location }) {
   }).node.price;
 
   const toggleAddonsTotalPrice = toggleAddonsProducts.reduce((sum, addon) => {
-    return sum + (toggleAddonsState[addon.name.toLowerCase()] ? addon.price : 0);
+    return sum + (toggleAddonsState[addon._id] ? addon.price : 0);
   }, 0);
 
   const totalPrice =
@@ -114,7 +114,7 @@ export default function IceCreamForm({ data, location }) {
     if (mainMenuChosenFlavours.length > 0) {
       const toggleAddons = {};
       for (const addon of toggleAddonsProducts) {
-        const key = addon.name.toLowerCase();
+        const key = addon._id;
         toggleAddons[key] = {
           name: addon.name,
           price: addon.price,
@@ -319,7 +319,7 @@ export default function IceCreamForm({ data, location }) {
         {product.apiRoute === "generic/flavour" && (
           <>
             {toggleAddonsProducts.map((addon) => {
-              const key = addon.name.toLowerCase();
+              const key = addon._id;
               const isChecked = !!toggleAddonsState[key];
               return (
                 <div className="addon-section" key={key}>
@@ -378,7 +378,7 @@ export default function IceCreamForm({ data, location }) {
               <DetailsSection
                 product={product}
                 toggleAddons={toggleAddonsProducts.reduce((acc, addon) => {
-                  const key = addon.name.toLowerCase();
+                  const key = addon._id;
                   acc[key] = { name: addon.name, price: addon.price, included: !!toggleAddonsState[key] };
                   return acc;
                 }, {})}

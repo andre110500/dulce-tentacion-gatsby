@@ -138,12 +138,12 @@ const DetailsSection = ({
                     role={onRemoveAddon ? "button" : undefined}
                     tabIndex={onRemoveAddon ? 0 : undefined}
                   >
-                    {key === "rocklets" && (
+                    {addon.name?.toLowerCase().includes("rocklets") && (
                       <span className="addon-badge__icon">
                         <RockletsIcon size={16} />
                       </span>
                     )}
-                    {key === "gotas de chocolate blanco" && (
+                    {addon.name?.toLowerCase().includes("gotas") && (
                       <span className="addon-badge__icon">
                         <WhiteChocolateDropsIcon size={16} />
                       </span>

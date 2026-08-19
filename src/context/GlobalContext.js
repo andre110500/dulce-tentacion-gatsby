@@ -50,8 +50,8 @@ function migrateAddOns(product) {
   if (!product?.addOns || product.addOns.toggleAddons) return product;
   const { rocklets, gotasChocolateBlanco, ...rest } = product.addOns;
   const toggleAddons = {};
-  if (rocklets) toggleAddons["rocklets"] = { ...rocklets, name: "Rocklets" };
-  if (gotasChocolateBlanco) toggleAddons["gotas de chocolate blanco"] = { ...gotasChocolateBlanco, name: "Gotas de chocolate blanco" };
+  if (rocklets) toggleAddons["64f3b8d9f0f00fea17c6ada0"] = { ...rocklets, name: "Rocklets" };
+  if (gotasChocolateBlanco) toggleAddons["6a7fa8a8f3328fb9f53e4953"] = { ...gotasChocolateBlanco, name: "Gotas Choc. Bco." };
   if (Object.keys(toggleAddons).length === 0) return product;
   return { ...product, addOns: { ...rest, toggleAddons } };
 }
