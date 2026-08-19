@@ -293,9 +293,9 @@
   .cart-addon-buttons {
     grid-column: 2;
     display: flex;
-    gap: 0.5rem;
-    padding: 0 1rem 0.75rem;
-
+    gap: 1rem;
+    padding: .5rem 1rem 0.75rem;
+flex-wrap: wrap;
     .addon-btn {
       position: relative;
       z-index: 2;
@@ -309,6 +309,7 @@
       font-size: 0.78rem;
       font-weight: 700;
       box-shadow: none;
+      white-space: nowrap;
 
       svg {
         width: 0.75rem;
