@@ -7,9 +7,11 @@ import { FaTimes } from "react-icons/fa";
 import RockletsIcon from "./RockletsIcon";
 import WhiteChocolateDropsIcon from "./WhiteChocolateDropsIcon";
 
-function FlavourThumb({ flavour, flavourMap }) {
+function FlavourThumb({ flavour, flavourMap, allFlavours }) {
   const data = flavourMap[flavour.toLowerCase()];
-  const image = data ? getImage(data.localImage) : null;
+  const fallback = allFlavours?.find((f) => f.name.toLowerCase() === flavour.toLowerCase());
+  const source = data || fallback;
+  const image = source ? getImage(source.localImage) : null;
 
   return (
     <div className="flavour-thumb" title={flavour}>
@@ -20,8 +22,8 @@ function FlavourThumb({ flavour, flavourMap }) {
             alt={flavour}
             imgStyle={{ objectFit: "cover" }}
           />
-        ) : data?.imgUrl ? (
-          <img src={data.imgUrl} alt={flavour} />
+        ) : source?.imgUrl ? (
+          <img src={source.imgUrl} alt={flavour} />
         ) : (
           <div className="flavour-thumb--fallback">
             <span>{flavour[0]}</span>
@@ -66,6 +68,7 @@ const DetailsSection = ({
   priceWithAddOns,
   chosenFlavours = [],
   flavourMap = {},
+  allFlavours,
   onChangeFlavours,
   onRemoveAddon,
   onRemoveSauce,
@@ -96,7 +99,7 @@ const DetailsSection = ({
           <span className="details-section__label">Sabores</span>
           <div className="flavours-row__list">
             {chosenFlavours.map((flavour) => (
-              <FlavourThumb key={flavour} flavour={flavour} flavourMap={flavourMap} />
+              <FlavourThumb key={flavour} flavour={flavour} flavourMap={flavourMap} allFlavours={allFlavours} />
             ))}
           </div>
         </div>

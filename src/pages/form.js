@@ -389,7 +389,16 @@ export default function IceCreamForm({ data, location }) {
                 priceWithAddOns={totalPrice}
                 chosenFlavours={mainMenuChosenFlavours}
                 flavourMap={Object.fromEntries(
-                  allFlavours.map((f) => [f.name.toLowerCase(), f])
+                  (() => {
+                    const seen = {};
+                    allFlavours.forEach((f) => {
+                      const key = f.name.toLowerCase();
+                      if (!seen[key] || f.apiRoute === "generic/flavour") {
+                        seen[key] = f;
+                      }
+                    });
+                    return Object.entries(seen);
+                  })()
                 )}
               />
             </section>

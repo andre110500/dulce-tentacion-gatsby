@@ -44,7 +44,10 @@ export default function CartItem({ cartItem, sauceFlavours, allFlavours }) {
     if (!allFlavours) return {};
     const map = {};
     allFlavours.forEach((f) => {
-      map[f.name.toLowerCase()] = f;
+      const key = f.name.toLowerCase();
+      if (!map[key] || f.apiRoute === "generic/flavour") {
+        map[key] = f;
+      }
     });
     return map;
   }, [allFlavours]);
@@ -206,6 +209,7 @@ export default function CartItem({ cartItem, sauceFlavours, allFlavours }) {
           }}
           chosenFlavours={product.chosenFlavours}
           flavourMap={flavourMap}
+          allFlavours={allFlavours}
           onRemoveAddon={(addonKey) => handleToggleAddon(dispatch, product, addonKey)}
           onRemoveSauce={
             currentSauces.length > 0
