@@ -41,68 +41,46 @@ export default function Cart() {
           }
         }
       }
+      allDiscount {
+        nodes {
+          _id
+          name
+          value
+          quantity
+          type
+          productId
+        }
+      }
     }
   `);
   const sauceFlavours = flavourData.allFlavour.nodes.filter(
     (flavour) => flavour.apiRoute === "generic/sauce"
   );
   const allFlavours = flavourData.allFlavour.nodes;
+  const discounts = flavourData.allDiscount.nodes;
 
   function getAllIceCreamDiscounts() {
-    function countFlavourAppearances(flavour) {
+    const result = [];
+
+    for (const discount of discounts) {
       const count = cartItems.reduce((acc, item) => {
-        if (item.product.flavours === flavour) {
-          return acc + item.count; // Add the count of this item to the accumulator
+        if (item.product._id === discount.productId) {
+          return acc + item.count;
         }
-        return acc; // Return the accumulator unchanged if the flavour doesn't match
+        return acc;
       }, 0);
-      console.log(`Flavour: ${flavour}, Total Appearances: ${count}`); // Log the flavour and its total count
-      return count;
+
+      const numberOfCombos = Math.floor(count / discount.quantity);
+
+      for (let i = 0; i < numberOfCombos; i++) {
+        result.push({
+          name: discount.name.charAt(0).toUpperCase() + discount.name.slice(1),
+          amount: discount.value,
+        });
+      }
     }
 
-    function getDiscountAmount(flavourCount) {
-      const discountMap = {
-        2: 300,
-        3: 500,
-      };
-      const amount = discountMap[flavourCount] || 0; // Return 0 if no discount
-      console.log(`Flavour Count: ${flavourCount}, Discount Amount: ${amount}`); // Log the flavour count and discount amount
-      return amount;
-    }
-
-    function getIceCreamName(flavourCount) {
-      const flavourNames = {
-        2: "1/4 kg",
-        3: "1/2 kg",
-      };
-      const name = flavourNames[flavourCount] || ""; // Return empty string if no match
-      console.log(`Flavour Count: ${flavourCount}, Ice Cream Name: ${name}`); // Log the flavour count and ice cream name
-      return name;
-    }
-
-    function calculateDiscountsForFlavour(flavourCount) {
-      const appearances = countFlavourAppearances(flavourCount);
-      const numberOfCombos = Math.floor(appearances / 2);
-      const discountAmount = getDiscountAmount(flavourCount);
-      const iceCreamName = getIceCreamName(flavourCount);
-
-      console.log(
-        `Calculating Discounts for Flavour Count: ${flavourCount}, Appearances: ${appearances}, Number of Combos: ${numberOfCombos}`
-      ); // Log the number of combos
-
-      return Array.from({ length: numberOfCombos }, () => ({
-        name: `Descuento 2u ${iceCreamName}`,
-        amount: discountAmount,
-      }));
-    }
-
-    const discounts = [];
-    for (let flavourCount = 2; flavourCount <= 3; flavourCount++) {
-      discounts.push(...calculateDiscountsForFlavour(flavourCount));
-    }
-
-    console.log(`Final Discounts:`, discounts); // Log the final discounts array
-    return discounts;
+    return result;
   }
 
   function getTotalDiscountAmmount() {

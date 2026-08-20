@@ -43,6 +43,25 @@ exports.sourceNodes = async ({ actions }) => {
     return data;
   };
 
+  const fetchDiscounts = async () => {
+    const apiUrl = process.env.GATSBY_API_URL;
+    const requestOptions = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    const response = await fetch(`${apiUrl}/discounts`, requestOptions);
+
+    if (!response.ok) {
+      throw new Error("Request failed for discounts");
+    }
+
+    const data = await response.json();
+
+    return data;
+  };
+
   try {
     // Fetch all products
     const products = await fetchProducts();
@@ -120,6 +139,34 @@ exports.sourceNodes = async ({ actions }) => {
 
         createNode(flavourNode);
       }
+    }
+
+    // Fetch and create Discount nodes
+    const discounts = await fetchDiscounts();
+    for (const discount of discounts) {
+      const discountNode = {
+        id: discount._id,
+        _id: discount._id,
+        parent: `__SOURCE__`,
+        internal: {
+          type: `Discount`,
+        },
+        children: [],
+        name: discount.name,
+        value: discount.value,
+        quantity: discount.quantity,
+        type: discount.type,
+        productId: discount.productId || "",
+      };
+
+      const contentDigest = crypto
+        .createHash(`md5`)
+        .update(JSON.stringify(discountNode))
+        .digest(`hex`);
+
+      discountNode.internal.contentDigest = contentDigest;
+
+      createNode(discountNode);
     }
   } catch (error) {
     console.error("Error fetching data:", error);
